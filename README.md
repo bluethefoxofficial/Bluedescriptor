@@ -11,3 +11,10 @@
 - added a panic button
 - player position
 - game world detection
+
+
+
+# Requirements
+- unity includes
+- melon loader DLL
+- visual studio 2022
