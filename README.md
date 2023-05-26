@@ -1,6 +1,8 @@
+![Image](https://raw.githubusercontent.com/bluethefoxofficial/Bluedescriptor/main/res/BLUEDESCRIPTOR.png)
+
+
 # Bluedescriptor
 
-![BD logo]([http://url/to/img.png](https://github.com/bluethefoxofficial/Bluedescriptor/blob/main/res/BLUEDESCRIPTOR.png?raw=true)
 
 
 ## Features
