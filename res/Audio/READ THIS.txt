@@ -1,0 +1,1 @@
+﻿This is where the default login music for the UI system is located. Not included in the repo for github, place any file and rename it to "bgmsc.ogg" HAS TO BE OGG VORBIS.
