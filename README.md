@@ -1,7 +1,7 @@
 ![Image](https://raw.githubusercontent.com/bluethefoxofficial/Bluedescriptor/main/res/BLUEDESCRIPTOR.png)
 
 
-# Bluedescriptor
+# Blue descriptor
 
 
 
