@@ -1,53 +1,71 @@
-﻿using ABI_RC.Core.Newton.NewtonEditor.Dependencies;
+﻿using ABI_RC.Core.UI;
 using Bluedescriptor_Rewritten.Classes;
 using Bluedescriptor_Rewritten.UISYSTEM;
 using BTKUILib.UIObjects;
 using MelonLoader;
-using RTG;
-using System;
-using System.Configuration.Assemblies;
 using System.IO;
 using System.Reflection;
-using TMPro;
 using UnityEngine;
-using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 [assembly: MelonInfo(typeof(Bluedescriptor_Rewritten.Main), "Blue Descriptor", "1.0.0", "Bluethefox")]
 
 namespace Bluedescriptor_Rewritten
-{   
+{
     public class Main : MelonMod
     {
         private Page scpage;
-        private Category[] scenecat;
-        public TextMeshPro textToMonitor;
-        private GameObject audio;
-
-        //prefrences
         private MelonPreferences_Category Uipref;
+        public BDWS webSocketClient;
 
-        private bool prepared = false;
+        public Main()
+        {
+            this.webSocketClient = new BDWS();
+        }
 
-        public override void OnInitializeMelon()
-        {      
-            Uipref = MelonPreferences.CreateCategory("UI");
 
-            LoggerInstance.Msg("Hello, youre running blue descriptor.\nBlue descriptor cant be used in game worlds there is a check in place to ensure that the world is not going to affect the mod.");
+        public override void OnApplicationStart()
+        {
+            webSocketClient.OnMessageReceived += OnMessageReceived;
+            webSocketClient.OnOnlineUsersReceived += OnOnlineUsersReceived;
+
             var ui = new UI();
             ui.menuinit();
             scpage = ui.scenespage;
         }
-        public override async void OnSceneWasLoaded(int buildIndex, string sceneName)
-        {
-            MelonLogger.Msg("[BD] Scene loaded: "+sceneName);
+        
 
+     
+
+        public override void OnSceneWasLoaded(int buildIndex, string sceneName)
+        {
+           
             switch (sceneName)
             {
+                case "Init" :
+
+
+                    string localplayeruser = GameObject.Find("_PLAYERLOCAL").GetComponent<ABI_RC.Core.Player.PlayerDescriptor>().userName;
+
+                    webSocketClient.ConnectAsync("ws://localhost:9090",localplayeruser);
+
+             
+
+                    break;
+                case "Headquarters":
+                    break;
+                case "Preperation":
+                //skip this scene
+                MelonLogger.Msg("[BD] Preperation scene detected named: " + sceneName + " skipping scene.");
+                UnityEngine.SceneManagement.SceneManager.LoadScene("Login",LoadSceneMode.Single);
+                    break;
                 case "Login":
-                    MelonLogger.Msg("[BD] Login scene detected named: " + sceneName + " starting process for ui conversion.");
-                    new Audio().Audioprep("Bluedescriptor_Rewritten.res.Audio.bgmsc.ogg","bgmsc");
+                   // webSocketClient.ConnectAsync("ws://localhost:9090");
+                    MelonLogger.Msg("[BD] Login scene detected named: " + sceneName + " starting process for UI conversion.");
+                    new Audio().Audioprep("Bluedescriptor_Rewritten.res.Audio.bgmsc.ogg", "bgmsc");
                     var login_img = GameObject.Find("CVRLogo");
+
                     byte[] img = null;
                     using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.BLUEDESCRIPTOR.png"))
                     {
@@ -56,8 +74,7 @@ namespace Bluedescriptor_Rewritten
                             using (var memoryStream = new MemoryStream())
                             {
                                 stream.CopyTo(memoryStream);
-                                 img = memoryStream.ToArray();
-
+                                img = memoryStream.ToArray();
                             }
                         }
                     }
@@ -68,17 +85,29 @@ namespace Bluedescriptor_Rewritten
                     login_img.GetComponent<Image>().material.mainTexture = texture;
                     GameObject audiogo = new GameObject();
 
+                    /* Audio aud = new Audio();
 
-                    Audio aud = new Audio();
+                     string audioFilePath = Path.Combine(Assembly.GetExecutingAssembly().Location, "bluedescriptor", "bgmsc.ogg");
+                     AudioClip currentClip = await aud.LoadClip(audioFilePath);
+                     audiogo.GetComponent<AudioSource>().clip = currentClip;
+                     audiogo.GetComponent<AudioSource>().Play(); 
+                   
 
-                    
-                    string audioFilePath = Path.Combine(Assembly.GetExecutingAssembly().Location,"bluedescriptor/"+"bgmsc.ogg");
-                    AudioClip currentClip = await aud.LoadClip(audioFilePath);
-                    audiogo.GetComponent<AudioSource>().clip = currentClip;
-                    audiogo.GetComponent<AudioSource>().Play();
+                     */
                     break;
             }
         }
+
+        private void OnMessageReceived(string message)
+        {
+            // Handle received message from WebSocket server
+            // ...
+        }
+
+        private void OnOnlineUsersReceived(System.Collections.Generic.List<string> usernames)
+        {
+            // Handle received online user list from WebSocket server
+            // ...
+        }
     }
 }
- 

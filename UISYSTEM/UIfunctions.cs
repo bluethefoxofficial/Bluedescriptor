@@ -14,8 +14,7 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
     internal class UIfunctions
     {
         public void panic()
-        {
-            
+        {   
             CohtmlHud.Instance.ViewDropTextImmediate($"<color=blue>[BD]</color>", $"Blue descriptor safety","Panic was initilized reload all avatars to undo.");
             //get all gameobjects with the CVRAvatar component from all scenes
             GameObject[] players = new CVRPlayer().remotePlayers();
@@ -37,8 +36,6 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
                         material.shader = Shader.Find("Standard");
                     }
                 }
-
-                //meshrenderers
                 MeshRenderer[] meshrenderers = player.GetComponentsInChildren<MeshRenderer>();
                 foreach (var meshrenderer in meshrenderers)
                 {
