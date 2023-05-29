@@ -3,6 +3,8 @@ using Bluedescriptor_Rewritten.Classes;
 using Bluedescriptor_Rewritten.UISYSTEM;
 using BTKUILib.UIObjects;
 using MelonLoader;
+using System.Collections.Generic;
+using System.Collections;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
@@ -16,22 +18,36 @@ namespace Bluedescriptor_Rewritten
     public class Main : MelonMod
     {
      
-        public BDWS webSocketClient;
+     
 
         public Main()
         {
-            this.webSocketClient = new BDWS();
+            
+
+        }
+
+        public static BDWS GetBDWS()
+        {
+            return new BDWS();
         }
 
 
         public override void OnInitializeMelon()
         {
             
-            webSocketClient.OnMessageReceived += OnMessageReceived;
-            webSocketClient.OnOnlineUsersReceived += OnOnlineUsersReceived;
+           
 
-            var ui = new UI();
-            ui.menuinit();
+            MelonPreferences.CreateCategory("Bluedescriptor","general");
+            MelonPreferences.CreateEntry("Bluedescriptor", "vrcnameplate", false);
+            MelonPreferences.CreateEntry("Bluedescriptor", "rainbowhud", false);
+            //list of rewards
+            MelonPreferences.CreateEntry("Bluedescriptor", "vrshit",false);
+            MelonPreferences.CreateEntry("Bluedescriptor", "YOUMETBLUE",false);
+            MelonPreferences.CreateEntry("Bluedescriptor", "blueleftyourlobby",false);
+            MelonPreferences.CreateEntry("Bluedescriptor", "kannauwu",false);
+            MelonPreferences.CreateEntry("Bluedescriptor", "shadowthehorny",false);
+            MelonPreferences.CreateEntry("Bluedescriptor", "shadowthehornycummykeyboard",false);
+       
          
         }
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
@@ -44,27 +60,19 @@ namespace Bluedescriptor_Rewritten
                 case "Preperation":
                     break;
                 case "Login":
-                break;
+                    var ui = new UI();
+                    ui.menuinit();
+                    break;
 
                 default:
-                    /* string localplayeruser = GameObject.Find("_PLAYERLOCAL").GetComponent<ABI_RC.Core.Player.CVRPlayerEntity>().Username;
 
-                     webSocketClient.ConnectAsync("ws://localhost:9090", localplayeruser); */
+     
 
-                break;
+
+                    break;
             }
         }
 
-        private void OnMessageReceived(string message)
-        {
-            // Handle received message from WebSocket server
-            // ...
-        }
 
-        private void OnOnlineUsersReceived(System.Collections.Generic.List<string> usernames)
-        {
-            // Handle received online user list from WebSocket server
-            // ...
-        }
     }
 }

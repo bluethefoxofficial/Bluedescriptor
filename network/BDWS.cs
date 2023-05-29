@@ -12,24 +12,19 @@ namespace Bluedescriptor_Rewritten
     {
         private ClientWebSocket _clientWebSocket;
         private CancellationTokenSource _cancellationTokenSource;
-
         public event Action<string> OnMessageReceived;
         public event Action<List<string>> OnOnlineUsersReceived;
-
         public async Task ConnectAsync(string serverUri, string username)
         {
             _clientWebSocket = new ClientWebSocket();
             _cancellationTokenSource = new CancellationTokenSource();
-
             try
             {
                 await _clientWebSocket.ConnectAsync(new Uri(serverUri), _cancellationTokenSource.Token);
                 MelonLogger.Msg("WebSocket connected successfully.");
-
                 // Send the username to the server
                 await SendMessageAsync(new { type = "username", username });
                 MelonLogger.Msg("Username sent to the server.");
-
                 // Start listening for messages from the server
                 _ = StartListeningAsync();
                 MelonLogger.Msg("Started listening for messages.");
@@ -39,7 +34,6 @@ namespace Bluedescriptor_Rewritten
                 MelonLogger.Error($"WebSocket connection error: {ex.Message}");
             }
         }
-
         public async Task DisconnectAsync()
         {
             _cancellationTokenSource?.Cancel();
