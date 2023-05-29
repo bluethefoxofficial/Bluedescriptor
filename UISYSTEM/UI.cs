@@ -2,34 +2,59 @@
 using Bluedescriptor_Rewritten.Classes;
 using MelonLoader;
 using UnityEngine;
-using ABI_RC.Core.UI;
-using cohtml.Net;
-using BTKUILib;
-using JetBrains.Annotations;
 using ABI_RC.Core.Player;
-using System.Security.Cryptography;
+using System.Collections.Generic;
+using System.Reflection;
+using System.IO;
+using cohtml;
+using ABI_RC.Core.Networking.IO.Global;
 
 namespace Bluedescriptor_Rewritten.UISYSTEM
 {
-    internal class UI 
+    internal class UI  : MelonMod
     {
         private Page bluedescriptorpage;
-        public Page scenespage;
-        private Page playerlist;
-        LineRenderer[] markerss = new LineRenderer[0];
+        private bool vrcnameplate = true;
+        private List<CVRPlayerEntity> plist = new List<CVRPlayerEntity>();
+        public override void OnSceneWasUnloaded(int buildIndex, string sceneName)
+        {
+            plist.Clear();
+        }
         void OnPlayerJoin(CVRPlayerEntity player)
         {
-            playerlist.AddCategory(player.Username);
+            /*
+             * 
+             * 
+             * vrchat nameplate system
+             * 
+             */
+            if (vrcnameplate)
+            {
+                try
+                {
+                    Assembly asm = Assembly.GetExecutingAssembly();
+                    byte[] buffer = new byte[255];
+                    using (Stream stream = asm.GetManifestResourceStream("Bluedescriptor_Rewritten.res.Nameplates.VRC.Visitor.png"))
+                    {
+                        buffer = new byte[stream.Length];
+                        stream.Read(buffer, 0, buffer.Length);
+                    }
+                    Texture2D tex = new Texture2D(256, 256);
+                    tex.LoadImage(buffer);
+                    Sprite spr = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero);
+                    player.PlayerNameplate.nameplateBackground.sprite = spr;
+                    player.PlayerNameplate.nameplateBackground.color = new UnityEngine.Color32(0,0,0,128);
+                    
+                }
+                catch(System.Exception ex)
+                {
+                    MelonLogger.Msg("[BD ERROR DETECTED]========= " +ex + "\n" + ex.Message);
+                }
         }
+}
+
         public void menuinit()
         {
-            new Icons().iconsinit();
-            playerlist = new Page("Bluedescriptor", "Player list", true, "bd_explorer");
-            BTKUILib.QuickMenuAPI.UserJoin += pl =>
-            {
-                OnPlayerJoin(pl);
-                MelonLogger.Msg(pl.Username);
-            };
             bluedescriptorpage = new Page("Bluedescriptor", "Bluedescriptorpage",true, "bd_logo");
             bluedescriptorpage.MenuTitle = "Blue descriptor properties";
             bluedescriptorpage.MenuSubtitle = "Properties to change how blue decriptor behaves.";
@@ -53,82 +78,51 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
                         MelonEvents.OnGUI.Unsubscribe(onpositionui);
                         break;
                 }
-            };  
+            };
+            /*
+             * 
+             * 
+             * General settings and features 
+             * 
+             */
             var general = bluedescriptorpage.AddCategory("General settings and features");
-            var microphonecolor = general.AddToggle("Rainbow microphone", "Enable a rainbow microphone", false);
-            microphonecolor.OnValueUpdated += togler =>
+            //Rainbow HUD
+            var RHUD = general.AddToggle("Rainbow HUD", "Enable a rainbow HUD interface", false);
+            RHUD.OnValueUpdated += togler =>
             {
-                var uiView = GameObject.Find("CohtmlHud").GetComponent<cohtml.CohtmlView>().View;
-
-                // Define the animation CSS. This only needs to be added once.
-                var animationCss = "var style = document.createElement('style');" +
-                                   "style.innerHTML = `" +
-                                   "@keyframes rainbowOpacity {" +
-                                   "  0% {opacity: 1;}" +
-                                   "  50% {opacity: 0.5;}" +
-                                   "  100% {opacity: 1;}" +
-                                   "}`;" +
-                                   "document.head.appendChild(style);";
-
-                uiView.ExecuteScript(animationCss);
-
-                if (togler) // The toggle was turned on
-                {
-                    var startAnimationCss = "var elements = document.querySelectorAll('.hex-hub');" +
-                                            "elements.forEach(function(element) {" +
-                                            "  element.style.animation = 'rainbowOpacity 2s infinite';" +
-                                            "});";
-
-                    uiView.ExecuteScript(startAnimationCss);
-                    MelonLogger.Msg("R A I N B O W");
-                }
-                else // The toggle was turned off
-                {
-                    var stopAnimationCss = "var elements = document.querySelectorAll('.hex-hub');" +
-                                           "elements.forEach(function(element) {" +
-                                           "  element.style.animation = '';" +
-                                           "});";
-
-                    uiView.ExecuteScript(stopAnimationCss);
-                    MelonLogger.Msg("no rainbow");
-                }
+             
             };
             var panicbutton = general.AddButton("Panic","bd_warn","removes all shaders from all avatars");
-
             panicbutton.OnPress += () =>
             {
                 new UIfunctions().panic();
             };
-            var loginmusictoggle = general.AddToggle("login background music", "Enable or disable background music on the login screen of chilloutvr", true);
-        }
-        public void gameobjectsui()
-        {   
-            if (GameObject.Find("BD_GW"))
+            /*
+             * 
+             * 
+             * Player events
+             * 
+             * 
+             * 
+             */
+            BTKUILib.QuickMenuAPI.UserJoin += pl =>
             {
-                BTKUILib.QuickMenuAPI.ShowAlertToast("Cant use this feature in this world.");
-                MelonLogger.Msg("Game World detected");
-                return;
-            }
-            var scenes = new cvrworld().getallscenesingame();
-            var objs = new cvrworld().gameobjectsinscene(scenes[0].name);
-            int labelpos = 100;
-            GUI.BeginScrollView(new Rect(20, 65, 1000, 200), new Vector2(0, 0), new Rect(0, 0, 1000, 200), true, true);
-            GUI.Label(new Rect(20, 70, 1000, 200), $"Scene Game objects");
-            if(objs == null || objs.Length == 0) {
-                GUI.Label(new Rect(20, labelpos, 1000, 200), $"NO GAME OBJECTS FOUND.");
-            }
-            foreach (var obj in objs)
+                OnPlayerJoin(pl);
+                MelonLogger.Msg(pl.Username);
+                OnLateUpdate();
+            };
+            BTKUILib.QuickMenuAPI.UserLeave += pl =>
             {
-                GUI.Label(new Rect(20, labelpos, 1000, 200), $"Name: {obj.name} | Layer:  {obj.layer} | is static: {obj.isStatic}");
-                labelpos += 20;
-            }
-            GUI.EndScrollView();
+                plist.Remove(pl);
+                MelonLogger.Msg(pl.Username + " Left");
+                OnLateUpdate();
+            };
         }
         private void onpositionui()
         {
-            int x = new CVRPlayer().localplayerposition()[0];
-            int y = new CVRPlayer().localplayerposition()[1];
-            int z = new CVRPlayer().localplayerposition()[2];
+            float x = new CVRPlayer().localplayerposition()[0];
+            float y = new CVRPlayer().localplayerposition()[1];
+            float z = new CVRPlayer().localplayerposition()[2];
             GUI.Label(new Rect(20, 40, 1000, 200), $"<b><size=20>Player Position: <color=red>{x}</color>, <color=green>{y}</color>, <color=blue>{z}</color></size></b>");
         }
     }

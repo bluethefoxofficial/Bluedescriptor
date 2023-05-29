@@ -15,8 +15,7 @@ namespace Bluedescriptor_Rewritten
 {
     public class Main : MelonMod
     {
-        private Page scpage;
-        private MelonPreferences_Category Uipref;
+     
         public BDWS webSocketClient;
 
         public Main()
@@ -25,76 +24,34 @@ namespace Bluedescriptor_Rewritten
         }
 
 
-        public override void OnApplicationStart()
+        public override void OnInitializeMelon()
         {
+            
             webSocketClient.OnMessageReceived += OnMessageReceived;
             webSocketClient.OnOnlineUsersReceived += OnOnlineUsersReceived;
 
             var ui = new UI();
             ui.menuinit();
-            scpage = ui.scenespage;
+         
         }
-        
-
-     
-
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
            
             switch (sceneName)
             {
-                case "Init" :
-
-
-                    string localplayeruser = GameObject.Find("_PLAYERLOCAL").GetComponent<ABI_RC.Core.Player.PlayerDescriptor>().userName;
-
-                    webSocketClient.ConnectAsync("ws://localhost:9090",localplayeruser);
-
-             
-
-                    break;
+                case "Init":
                 case "Headquarters":
-                    break;
                 case "Preperation":
-                //skip this scene
-                MelonLogger.Msg("[BD] Preperation scene detected named: " + sceneName + " skipping scene.");
-                UnityEngine.SceneManagement.SceneManager.LoadScene("Login",LoadSceneMode.Single);
                     break;
                 case "Login":
-                   // webSocketClient.ConnectAsync("ws://localhost:9090");
-                    MelonLogger.Msg("[BD] Login scene detected named: " + sceneName + " starting process for UI conversion.");
-                    new Audio().Audioprep("Bluedescriptor_Rewritten.res.Audio.bgmsc.ogg", "bgmsc");
-                    var login_img = GameObject.Find("CVRLogo");
+                break;
 
-                    byte[] img = null;
-                    using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.BLUEDESCRIPTOR.png"))
-                    {
-                        if (stream != null)
-                        {
-                            using (var memoryStream = new MemoryStream())
-                            {
-                                stream.CopyTo(memoryStream);
-                                img = memoryStream.ToArray();
-                            }
-                        }
-                    }
+                default:
+                    /* string localplayeruser = GameObject.Find("_PLAYERLOCAL").GetComponent<ABI_RC.Core.Player.CVRPlayerEntity>().Username;
 
-                    Texture2D texture = new Texture2D(600, 600);
-                    texture.LoadImage(img);
+                     webSocketClient.ConnectAsync("ws://localhost:9090", localplayeruser); */
 
-                    login_img.GetComponent<Image>().material.mainTexture = texture;
-                    GameObject audiogo = new GameObject();
-
-                    /* Audio aud = new Audio();
-
-                     string audioFilePath = Path.Combine(Assembly.GetExecutingAssembly().Location, "bluedescriptor", "bgmsc.ogg");
-                     AudioClip currentClip = await aud.LoadClip(audioFilePath);
-                     audiogo.GetComponent<AudioSource>().clip = currentClip;
-                     audiogo.GetComponent<AudioSource>().Play(); 
-                   
-
-                     */
-                    break;
+                break;
             }
         }
 

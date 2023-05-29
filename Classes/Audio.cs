@@ -48,7 +48,7 @@ namespace Bluedescriptor_Rewritten.Classes
                 MelonLogger.Msg("COMPLETE");
             }
         }
-        public AudioSource audioSource;
+        public AudioSource audioSource = new AudioSource();
 
         // Function to load audio data from a file
 

@@ -129,9 +129,11 @@
   <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
+    <EmbeddedResource Include="res\Font\VRC\Md_Gothic11.ttf" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="res\Audio\READ THIS.txt" />
+    <EmbeddedResource Include="res\Nameplates\VRC\Visitor.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
