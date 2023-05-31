@@ -20,6 +20,9 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
                 BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_warn", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.bd_warn.png"));
                 BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_reconnect", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.reconnect.png"));
                 BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_rewards", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.Rewards.png"));
+                BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_themes", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.themes.png"));
+                BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_download", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.download.png"));
+                BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_trash", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.trash.png"));
                 preparedicons = false;
             
         }

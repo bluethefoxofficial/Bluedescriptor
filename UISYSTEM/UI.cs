@@ -15,12 +15,16 @@ using System;
 using RTG;
 using BTKUILib;
 using System.Linq;
+using ABI_RC.Core.Networking.API.Responses;
+using System.Net;
+using MelonLoader.ICSharpCode.SharpZipLib.Zip;
 
 namespace Bluedescriptor_Rewritten.UISYSTEM
 {
     internal class UI  : MelonMod
     {
         private Page bluedescriptorpage;
+
         public BDWS webSocketClient;
         private Page acheivements;
         private bool vrcnameplate = false;
@@ -44,6 +48,8 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
         {
             rainbowhud();
             new Classes.Memoryautoclear().OnFixedUpdate();
+
+            quickmenyinitstyler(MelonPreferences.GetEntryValue<string>("Bluedescriptor", "quickmenuskin"));
         }
         
         void OnPlayerJoin(CVRPlayerEntity player)
@@ -119,7 +125,6 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
             player.PlayerNameplate.usrNameText.canvasRenderer.SetAlpha((float)10000f);
             player.PlayerNameplate.friendsImage.color = new Color32(1, 1, 1, 255);
         }
-
         private void SetupTalkerIcon(CVRPlayerEntity player, Sprite sprite)
         {
             GameObject talker = new GameObject("TalkerIcon");
@@ -151,7 +156,6 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
             corountinemgr.AddComponent<Classes.CoroutineManager>();
             corountinemgr.GetComponent<Classes.CoroutineManager>().StartCoroutine(IsTalking(obj));
         }
-
         private IEnumerator IsTalking(object[] obj)
         {
            
@@ -167,7 +171,7 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
                 else
                 {
                     talker.SetActive(false);
-                }
+                } 
 
                 yield return null;
             }
@@ -175,35 +179,50 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
 
         /*
          * 
-         * 
-         * 
          * QUICK MENU INIT
          * 
          */
-
         public void quickmenyinitstyler(string downloadedtheme)
         {
-            //Load a skin from a folder with 2 files skin.css and function.js look for either function.js isnt important but skin.css is.
-            Assembly asm = Assembly.GetExecutingAssembly();
-            string path = Path.GetFullPath(asm.Location + "\\bluedescriptor\\");
-            if (!Directory.Exists(path))
+
+            try
             {
-                Directory.CreateDirectory(path);
-                Directory.CreateDirectory(path + "\\skins\\");
-            }
-            string qms = MelonPreferences.GetEntryValue<string>("Bluedescriptor", "quickmenuskin");
-            if (qms != "")
-            { 
-                ABI_RC.Core.InteractionSystem.CVR_MenuManager.Instance.quickMenu.View.ExecuteScript(@"document.getElementsByTagName('style')[1].innerHTML = '" + "placeholder" + "");
-                ABI_RC.Core.InteractionSystem.CVR_MenuManager.Instance.quickMenu.View.ExecuteScript(@"");
+                // Load a skin from a folder with 2 files: skin.css and function.js. Look for skin.css.
+                Assembly asm = Assembly.GetExecutingAssembly();
+                string path = Path.GetFullPath(asm.Location + "\\bluedescriptor\\");
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                    Directory.CreateDirectory(path + "\\skins\\");
+                }
+
+                string skinpath = path + "\\skins\\" + downloadedtheme;
+                string qms = MelonPreferences.GetEntryValue<string>("Bluedescriptor", "quickmenuskin");
+                if (qms != "")
+                {
+                    string cssPath = Path.Combine(skinpath, "skin.css");
+                    string jsPath = Path.Combine(skinpath, "function.js");
+                    string cssContent = File.Exists(cssPath) ? File.ReadAllText(cssPath) : "";
+                    string jsContent = File.Exists(jsPath) ? File.ReadAllText(jsPath) : "";
+                    // Execute the JavaScript code with the loaded CSS and JavaScript contents
+                    string jsCode = $"document.querySelector('head').innerHTML += '<style>{cssContent}</style>';\n{jsContent}";
+                    //ABI_RC.Core.InteractionSystem.CVR_MenuManager.Instance.quickMenu(jsCode); in 2021 this breaks
+                }
+            }catch(Exception ex)
+            {
+                MelonLogger.Error(ex);
             }
         }
+
         public void loadrewards()
         {
             var rewards = acheivements.AddCategory("Rewards");
 
-         
-            acheivements.ClearChildren();
+            try
+            {
+                acheivements.ClearChildren();
+            }
+            catch { }
 
 
             //if else if else if else if else. eh who gives a fuck
@@ -265,12 +284,7 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
         }
         public void menuinit()
         {
-
-
                 bluedescriptorpage = new Page("Bluedescriptor", "Bluedescriptorpage",true, "bd_logo");
-
-            
-      
             var profilecat =  bluedescriptorpage.AddCategory("Your Profile");
             acheivements = profilecat.AddPage("achievements", "bd_rewards", "Your achievements from doing certain things in game.","Bluedescriptor");
           
@@ -280,6 +294,7 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
             bluedescriptorpage.MenuTitle = "Blue descriptor properties";
             bluedescriptorpage.MenuSubtitle = "Properties to change how blue decriptor behaves.";
             var desktopuisettings = bluedescriptorpage.AddCategory("Desktop settings");
+
             var positionbutton = desktopuisettings.AddToggle("Show my position","show/hide position of the player",false);
             positionbutton.OnValueUpdated += b =>
             {
@@ -330,6 +345,98 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
                 rainbowhud();
                 MelonPreferences.Save();
             };
+
+
+            /* skins
+             * 
+             * 
+             * 
+             */
+
+            List<SkinInfo> list;
+            var Skinselection = general.AddPage("Skins", "bd_themes", "","Bluedescriptor");
+            var skinselection_list_settings = Skinselection.AddCategory("Skin settings");
+            var skinselection_list_dld = Skinselection.AddCategory("Downloadable");
+            var skinrldbtn = skinselection_list_settings.AddButton("Reload", "bd_reconnect","reload skin list");
+
+            var skinreset = skinselection_list_settings.AddButton("Reset to default", "bd_trash", "reset the theme to the default (requires restarting)");
+            skinreset.OnPress += () =>
+            {
+                MelonPreferences.SetEntryValue("Bluedescriptor", "quickmenuskin", "");
+                MelonPreferences.Save();
+
+                BTKUILib.QuickMenuAPI.ShowAlertToast("Skin reset, restart to apply.");
+
+
+            };
+            skinrldbtn.OnPress += () =>
+            {
+                list = skins.GetSkinInfo();
+                try
+                {
+                    skinselection_list_dld.ClearChildren();
+                }
+                catch { }
+                list.ForEach(s =>
+                {
+
+                    var btn = skinselection_list_dld.AddButton(s.SkinName, "bd_download", "Version: " + s.SkinVersion + " Author: " + s.SkinAuthor);
+                    btn.OnPress += () =>
+                    {
+
+                        try
+                        {
+                            //download .zip from https://raw.githubusercontent.com/bluethefoxofficial/Bluedescriptor-themedatabase/main/<zip file here>
+
+                            //extract to the path
+                            string path = Path.GetFullPath(Assembly.GetExecutingAssembly().Location + "\\bluedescriptor\\skins\\" + s.SkinName);
+                            if (Directory.Exists(path))
+                            {
+                                BTKUILib.QuickMenuAPI.ShowAlertToast("Skin already exists");
+                                return;
+                            }
+                            else
+                            {
+                                Directory.CreateDirectory(path);
+
+
+
+                                //download zip file
+                                WebClient webClient = new WebClient();
+                                string zipFilePath = path + "\\" + s.SkinName + ".zip";
+                                webClient.DownloadFile("https://raw.githubusercontent.com/bluethefoxofficial/Bluedescriptor-themedatabase/main/" + s.SkinName + ".zip", zipFilePath);
+
+                                //extract zip file
+                                try
+                                {
+                                    System.IO.Compression.ZipFile.ExtractToDirectory(zipFilePath, path);
+                                }
+                                catch (Exception ex)
+                                {
+                                    BTKUILib.QuickMenuAPI.ShowAlertToast("Failed to extract skin: " + ex.Message);
+                                    return;
+                                }
+
+                                //delete zip file
+                                File.Delete(zipFilePath);
+
+                            }
+                            //apply skin
+                            //apply skin to the setting in melon preferences
+                            MelonPreferences.SetEntryValue("Bluedescriptor", "quickmenuskin", s.SkinName);
+                            MelonPreferences.Save();
+                            quickmenyinitstyler(s.SkinName);
+
+                            BTKUILib.QuickMenuAPI.ShowAlertToast("Skin downloaded");
+                        }
+                        catch (Exception ex)
+                        {
+                            MelonLogger.Error(ex);
+                        }
+                    };
+                    });
+            
+            };
             var reconnect = general.AddButton("Reconnect", "bd_reconnect", "Reconnect to blue descriptor network system");
             reconnect.OnPress += () => {
                 try
@@ -352,7 +459,6 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
                     if (!MelonPreferences.GetEntryValue<bool>("Bluedescriptor", "vrshit"))
                     {
                         MelonPreferences.SetEntryValue("Bluedescriptor", "vrshit", true);
-
                         CohtmlHud.Instance.ViewDropTextImmediate($"<color=blue>[BD]</color>", $"Blue Descriptor REWARDS", "NEW REWARD EARNED.");
                     }
                     loadrewards();

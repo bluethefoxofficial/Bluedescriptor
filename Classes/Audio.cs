@@ -11,6 +11,22 @@ namespace Bluedescriptor_Rewritten.Classes
 {
     internal class Audio
     {
+
+        /*
+         * 
+         * 
+         * repair microphone lag
+         * 
+         */
+
+        public void miclagfix(){
+
+
+
+
+            }
+
+
         /*
          * 
          * this is a work in progress no where near ready for production
