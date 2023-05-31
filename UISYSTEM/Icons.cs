@@ -12,8 +12,7 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
     {
         bool preparedicons = true;
         public void iconsinit() {
-            while (preparedicons)
-            {
+          
                 BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_settings", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.bluedescriptorsettings.png"));
                 BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_explorer", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.bluedescriptorscenexplorer.png"));
                 BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_logo", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.BLUEDESCRIPTOR.png"));
@@ -22,7 +21,7 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
                 BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_reconnect", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.reconnect.png"));
                 BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_rewards", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.Rewards.png"));
                 preparedicons = false;
-            }
+            
         }
     }
 }

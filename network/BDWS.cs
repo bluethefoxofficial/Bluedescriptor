@@ -12,19 +12,30 @@ namespace Bluedescriptor_Rewritten
     {
         private ClientWebSocket _clientWebSocket;
         private CancellationTokenSource _cancellationTokenSource;
+
+        public bool IsConnected { get; private set; }
         public event Action<string> OnMessageReceived;
         public event Action<List<string>> OnOnlineUsersReceived;
+        public event Action OnConnected;
+        public event Action OnDisconnected;
+
         public async Task ConnectAsync(string serverUri, string username)
         {
             _clientWebSocket = new ClientWebSocket();
             _cancellationTokenSource = new CancellationTokenSource();
+
             try
             {
                 await _clientWebSocket.ConnectAsync(new Uri(serverUri), _cancellationTokenSource.Token);
                 MelonLogger.Msg("WebSocket connected successfully.");
+
+                IsConnected = true;
+                OnConnected?.Invoke();
+
                 // Send the username to the server
                 await SendMessageAsync(new { type = "username", username });
                 MelonLogger.Msg("Username sent to the server.");
+
                 // Start listening for messages from the server
                 _ = StartListeningAsync();
                 MelonLogger.Msg("Started listening for messages.");
@@ -34,16 +45,26 @@ namespace Bluedescriptor_Rewritten
                 MelonLogger.Error($"WebSocket connection error: {ex.Message}");
             }
         }
+
         public async Task DisconnectAsync()
         {
             _cancellationTokenSource?.Cancel();
             await _clientWebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client disconnecting", CancellationToken.None);
             _clientWebSocket.Dispose();
             MelonLogger.Msg("WebSocket disconnected.");
+
+            IsConnected = false;
+            OnDisconnected?.Invoke();
         }
 
         public async Task SendMessageAsync(object message)
         {
+            if (!IsConnected)
+            {
+                MelonLogger.Msg("WebSocket is not connected. Cannot send message.");
+                return;
+            }
+
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(message);
             byte[] buffer = Encoding.UTF8.GetBytes(json);
             await _clientWebSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
@@ -77,7 +98,12 @@ namespace Bluedescriptor_Rewritten
             }
             catch (Exception ex)
             {
-                MelonLogger.Error($"WebSocket client error: {ex.Message}");
+               
+            }
+            finally
+            {
+                IsConnected = false;
+                OnDisconnected?.Invoke();
             }
         }
 

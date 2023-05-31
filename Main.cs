@@ -17,26 +17,14 @@ namespace Bluedescriptor_Rewritten
 {
     public class Main : MelonMod
     {
-     
-     
 
+        bool uiprep = false;
         public Main()
         {
-            
-
+            new Memoryautoclear().CleanupMemory() ;
         }
-
-        public static BDWS GetBDWS()
-        {
-            return new BDWS();
-        }
-
-
         public override void OnInitializeMelon()
         {
-            
-           
-
             MelonPreferences.CreateCategory("Bluedescriptor","general");
             MelonPreferences.CreateEntry("Bluedescriptor", "vrcnameplate", false);
             MelonPreferences.CreateEntry("Bluedescriptor", "rainbowhud", false);
@@ -47,32 +35,16 @@ namespace Bluedescriptor_Rewritten
             MelonPreferences.CreateEntry("Bluedescriptor", "kannauwu",false);
             MelonPreferences.CreateEntry("Bluedescriptor", "shadowthehorny",false);
             MelonPreferences.CreateEntry("Bluedescriptor", "shadowthehornycummykeyboard",false);
-       
-         
+            MelonPreferences.CreateEntry("Bluedescriptor", "gangmonkey",false);
+            //memory management
+            MelonPreferences.CreateEntry("Bluedescriptor", "memorycleanup",false);
+            MelonPreferences.CreateEntry("Bluedescriptor", "quickmenuskin","");
+
+            //nameplate settings
+            MelonPreferences.CreateEntry("Bluedescriptor", "nameplate-speed", 0.5f);
+            new UISYSTEM.Icons().iconsinit();
+            new UI().uiinit();
         }
-        public override void OnSceneWasLoaded(int buildIndex, string sceneName)
-        {
-           
-            switch (sceneName)
-            {
-                case "Init":
-                case "Headquarters":
-                case "Preperation":
-                    break;
-                case "Login":
-                    var ui = new UI();
-                    ui.menuinit();
-                    break;
-
-                default:
-
-     
-
-
-                    break;
-            }
-        }
-
-
+    
     }
 }

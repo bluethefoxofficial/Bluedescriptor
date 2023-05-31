@@ -40,15 +40,15 @@ namespace Bluedescriptor_Rewritten.Classes
             return players;
         }
 
-        public float[] localplayerposition()
+        public int[] localplayerposition()
         {
             GameObject player = Localplayer();
-            float[] nullified = new float[3];
+            int[] nullified = new int[2];
             if (player == null) return nullified;
-            float[] position = new float[3];
-            position[0] = (float)player.transform.position.x;
-            position[1] = (float)player.transform.position.y;
-            position[2] = (float)player.transform.position.z;
+            int[] position = new int[2];
+            position[0] = (int)player.transform.position.x;
+            position[1] = (int)player.transform.position.y;
+            position[2] = (int)player.transform.position.z;
 
             return position;
         }

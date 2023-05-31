@@ -1,21 +1,25 @@
-﻿using ABI_RC.Core.UI;
+﻿using ABI_RC.Core.InteractionSystem;
+using ABI_RC.Core.UI;
 using Bluedescriptor_Rewritten.Classes;
-using BTKUILib.UIObjects.Components;
+
 using MelonLoader;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+
 
 namespace Bluedescriptor_Rewritten.UISYSTEM
 {
     internal class UIfunctions
     {
+        public void Quickmenupanelinit()
+        {
+            //implement logic later :skull:
+        }
         public void panic()
-        {   
-            CohtmlHud.Instance.ViewDropTextImmediate($"<color=blue>[BD]</color>", $"Blue descriptor safety","Panic was initilized reload all avatars to undo.");
+        {
+            
+            CohtmlHud.Instance.ViewDropTextImmediate($"<color=blue>[BD]</color>", $"Blue Descriptor Safety","Panic was initilized reload all avatars to undo.");
             //get all gameobjects with the CVRAvatar component from all scenes
             GameObject[] players = new CVRPlayer().remotePlayers();
             //loop through all players
@@ -48,6 +52,5 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
                 }
             }
         }
- 
     }
 }

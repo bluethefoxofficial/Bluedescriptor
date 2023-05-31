@@ -106,9 +106,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Audio.cs" />
+    <Compile Include="Classes\BlackAndWhiteConverter.cs" />
+    <Compile Include="Classes\CoroutineManager.cs" />
     <Compile Include="Classes\CVRDETAILEXTRACTOR.cs" />
     <Compile Include="Classes\CVRPlayer.cs" />
     <Compile Include="Classes\cvrworld.cs" />
+    <Compile Include="Classes\Memoryautoclear.cs" />
     <Compile Include="Classes\RainbowColorChange.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="network\BDWS.cs" />
@@ -139,6 +142,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="res\Audio\READ THIS.txt" />
+    <Content Include="res\menu\quickmenu.js" />
+    <EmbeddedResource Include="res\Nameplates\VRC\Talker.png" />
+    <EmbeddedResource Include="res\Rewards.png" />
     <EmbeddedResource Include="res\reconnect.png" />
     <EmbeddedResource Include="res\Nameplates\VRC\Visitor.png" />
   </ItemGroup>

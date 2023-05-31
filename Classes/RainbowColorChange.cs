@@ -82,7 +82,7 @@ namespace Bluedescriptor_Rewritten.Classes
                 r = (r + 1) / 2;
                 g = (g + 1) / 2;
                 b = (b + 1) / 2;
-              
+
                 textToChange.outlineColor = new Color(r, g, b);
                 yield return null;
             }
