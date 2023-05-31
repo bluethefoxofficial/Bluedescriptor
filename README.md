@@ -11,7 +11,14 @@
 - added a panic button
 - player position
 - game world detection
+- custom nameplate
+- rewards
 
+## TODO
+- direct message
+- global chat
+- chat image sending
+- calling
 
 
 # Requirements
