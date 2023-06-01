@@ -150,6 +150,8 @@
     <None Include="packages.config" />
     <EmbeddedResource Include="res\Font\VRC\Md_Gothic11.ttf" />
     <EmbeddedResource Include="res\Audio\playful-notification.ogg" />
+    <EmbeddedResource Include="res\Audio\alarm.ogg" />
+    <EmbeddedResource Include="res\Audio\join.ogg" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="res\Audio\READ THIS.txt" />

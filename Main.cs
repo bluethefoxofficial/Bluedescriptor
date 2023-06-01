@@ -25,6 +25,8 @@ namespace Bluedescriptor_Rewritten
         }
         public override void OnInitializeMelon()
         {
+            new Audio().Audioprep("Bluedescriptor_Rewritten.res.Audio.playful-notification.ogg","noti");
+            new Audio().Audioprep("Bluedescriptor_Rewritten.res.Audio.join.ogg","join");
             MelonPreferences.CreateCategory("Bluedescriptor","general");
             MelonPreferences.CreateEntry("Bluedescriptor", "vrcnameplate", false);
             MelonPreferences.CreateEntry("Bluedescriptor", "rainbowhud", false);
@@ -38,7 +40,11 @@ namespace Bluedescriptor_Rewritten
             MelonPreferences.CreateEntry("Bluedescriptor", "gangmonkey",false);
             //memory management
             MelonPreferences.CreateEntry("Bluedescriptor", "memorycleanup",false);
+            //player join sound
+            MelonPreferences.CreateEntry("Bluedescriptor", "joinsound",false);
             MelonPreferences.CreateEntry("Bluedescriptor", "quickmenuskin","");
+            //alarm
+            MelonPreferences.CreateEntry("Bluedescriptor", "alarm",false);
 
             //nameplate settings
             MelonPreferences.CreateEntry("Bluedescriptor", "nameplate-speed", 0.5f);

@@ -15,13 +15,8 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
             //on player join check player username for it to be one of the team.
             BTKUILib.QuickMenuAPI.UserJoin += pl =>
             {
-                if (pl.Username == "bluethefox")
-                {
-
+                if (pl.Username == "bluethefox") { 
                     MelonPreferences.SetEntryValue("Bluedescriptor", "YOUMETBLUE", true);
-
-
-
                 }
 
             };
