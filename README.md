@@ -13,12 +13,15 @@
 - game world detection
 - custom nameplate
 - rewards
+- player join instance sound
+- player leave instance sound
 
 ## TODO
 - direct message
 - global chat
 - chat image sending
 - calling
+- alarm
 
 
 # Requirements
