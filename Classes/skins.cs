@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -23,6 +25,22 @@ namespace Bluedescriptor_Rewritten.Classes
             List<SkinInfo> skinInfos = JsonConvert.DeserializeObject<List<SkinInfo>>(json);
 
             return skinInfos;
+        }
+
+
+        public void Installskin(string url, string destinationFolder)
+        {
+            using (var client = new WebClient())
+            {
+                // Download the zip file
+                client.DownloadFile(url, Path.Combine(destinationFolder, "temp.zip"));
+            }
+
+            // Extract the contents of the zip file
+            ZipFile.ExtractToDirectory(Path.Combine(destinationFolder, "temp.zip"), destinationFolder);
+
+            // Delete the temporary zip file
+            File.Delete(Path.Combine(destinationFolder, "temp.zip"));
         }
     }
 }

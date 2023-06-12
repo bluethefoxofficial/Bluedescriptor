@@ -3,29 +3,23 @@ using Bluedescriptor_Rewritten.Classes;
 using MelonLoader;
 using UnityEngine;
 using ABI_RC.Core.Player;
-using System.Collections.Generic;
-using System.Reflection;
 using System.IO;
-using UnityEngine.UI;
-using System.Collections;
 using ABI_RC.Core.UI;
 using cohtml;
-using cohtml.Net;
 using System;
-using RTG;
-using BTKUILib;
 using System.Linq;
-using ABI_RC.Core.Networking.API.Responses;
 using System.Net;
-using MelonLoader.ICSharpCode.SharpZipLib.Zip;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using BTKUILib;
+using ABI_RC.Core.Networking.IO.Self;
+using System.Diagnostics;
 
 namespace Bluedescriptor_Rewritten.UISYSTEM
 {
     internal class UI  : MelonMod
     {
         private Page bluedescriptorpage;
-
+        private Alarm alrm;
         public BDWS webSocketClient;
         private Page acheivements;
         private bool vrcnameplate = false;
@@ -45,16 +39,7 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
             plist.Clear();
             
         }
-        public override void OnSceneWasLoaded(int buildIndex, string sceneName)
-        {
-            rainbowhud();
-            new Classes.Memoryautoclear().OnFixedUpdate();
-
-           new UIfunctions().quickmenyinitstyler(MelonPreferences.GetEntryValue<string>("Bluedescriptor", "quickmenuskin"));
-        }
-
         //rewards system
-
         public void loadrewards()
         {
             var rewards = acheivements.AddCategory("Rewards");
@@ -70,7 +55,7 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
 
             if (reward_vrshit)
             {
-                rewards.AddButton("VRSHIT!!!!!", "", "You turned on classic nameplates.");
+                rewards.AddButton("VRSHIT!!!!!", "", "You turned on custom nameplates.");
             }
             else
             {
@@ -123,39 +108,32 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
             if (MelonLoader.MelonMod.RegisteredMelons.FirstOrDefault(m => m.Info.Name == "BTKUILib") != null)
                 menuinit();
         }
+        GameObject corountinemgr = new GameObject();
+
         public void menuinit()
         {
-                bluedescriptorpage = new Page("Bluedescriptor", "Bluedescriptorpage",true, "bd_logo");
-            var profilecat =  bluedescriptorpage.AddCategory("Your Profile");
-            acheivements = profilecat.AddPage("achievements", "bd_rewards", "Your achievements from doing certain things in game.","Bluedescriptor");
-          
+            corountinemgr.AddComponent<Classes.CoroutineManager>();
+
+            bluedescriptorpage = new Page("Bluedescriptor", "Bluedescriptorpage", true, "bd_logo");
+
+            new EULA().eulacheck();
+
+            QuickMenuAPI.OnOpenedPage += (string arg1, string arg2) =>
+            {
+                new EULA().eulacheck();
+            };
+            var profilecat = bluedescriptorpage.AddCategory("Your Profile");
+            acheivements = profilecat.AddPage("achievements", "bd_rewards", "Your achievements from doing certain things in game.", "Bluedescriptor");
+
 
             webSocketClient = new BDWS();
 
+      
+
+ 
+
             bluedescriptorpage.MenuTitle = "Blue descriptor properties";
             bluedescriptorpage.MenuSubtitle = "Properties to change how blue decriptor behaves.";
-            var desktopuisettings = bluedescriptorpage.AddCategory("Desktop settings");
-
-            var positionbutton = desktopuisettings.AddToggle("Show my position","show/hide position of the player",false);
-            positionbutton.OnValueUpdated += b =>
-            {
-                if (GameObject.Find("BD_GW"))
-                {
-                    BTKUILib.QuickMenuAPI.ShowAlertToast("Cant use this feature in this world.");
-                    MelonLogger.Msg("Game World detected");
-                    positionbutton.ToggleValue = false;
-                    return;
-                }
-                switch (positionbutton.ToggleValue)
-                {
-                    case true:
-                        MelonEvents.OnGUI.Subscribe(onpositionui, 100);
-                        break;
-                    case false:
-                        MelonEvents.OnGUI.Unsubscribe(onpositionui);
-                        break;
-                }
-            };
             /*
              * 
              * 
@@ -163,22 +141,39 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
              * 
              */
             var general = bluedescriptorpage.AddCategory("General settings and features");
-           
-            //Rainbow HUD
+
+            new UIfunctions().nameplatesettings(general);
+            /*
+             * 
+             * 
+             * Alarm clock
+             * 
+             * 
+             */
+            new UIfunctions().alarmsettings(general);
+
+            /*
+             * 
+             * 
+             * rainbow hud
+             * 
+             * 
+             */
+
             var RHUD = general.AddToggle("Rainbow HUD", "Enable a rainbow HUD interface", false);
             RHUD.OnValueUpdated += togler =>
             {
 
-                switch(togler)
+                switch (togler)
                 {
-                case true:
+                    case true:
                         MelonPreferences.SetEntryValue("Bluedescriptor", "rainbowhud", true);
 
                         rainbowhudv = true;
-                        
-                break;
 
-                case false:
+                        break;
+
+                    case false:
                         MelonPreferences.SetEntryValue("Bluedescriptor", "rainbowhud", false);
                         rainbowhudv = false;
                         break;
@@ -188,106 +183,121 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
             };
 
 
-            /* skins
-             * 
-             * 
-             * 
-             */
-
-            List<SkinInfo> list;
-            var Skinselection = general.AddPage("Skins", "bd_themes", "","Bluedescriptor");
-            var skinselection_list_settings = Skinselection.AddCategory("Skin settings");
+            List<SkinInfo> list = skins.GetSkinInfo();
+            var Skinselection = general.AddPage("Themes", "bd_themes", "manage theme settings", "Bluedescriptor");
+            var skinselection_list_settings = Skinselection.AddCategory("Theme settings");
+            var installed = skinselection_list_settings.AddPage("Installed themes", "bd_themes", "select themes", "Bluedescriptor");
+  
             var skinselection_list_dld = Skinselection.AddCategory("Downloadable");
-            var skinrldbtn = skinselection_list_settings.AddButton("Reload", "bd_reconnect","reload skin list");
 
-            var skinreset = skinselection_list_settings.AddButton("Reset to default", "bd_trash", "reset the theme to the default (requires restarting)");
-            skinreset.OnPress += () =>
-            {
-                MelonPreferences.SetEntryValue("Bluedescriptor", "quickmenuskin", "");
-                MelonPreferences.Save();
-                BTKUILib.QuickMenuAPI.ShowAlertToast("Skin reset, restart to apply.");
-            };
-            skinrldbtn.OnPress += () =>
-            {
-                list = skins.GetSkinInfo();
-                try
-                {
-                    skinselection_list_dld.ClearChildren();
-                }
-                catch { }
-                list.ForEach(s =>
-                {
+            skinselection_list_dld?.ClearChildren();
 
+            if (list.Count == 0)
+            {
+                BTKUILib.QuickMenuAPI.ShowAlertToast("No skins found");
+            }
+            else
+            {
+                foreach (var s in list)
+                {
                     var btn = skinselection_list_dld.AddButton(s.SkinName, "bd_download", "Version: " + s.SkinVersion + " Author: " + s.SkinAuthor);
                     btn.OnPress += () =>
                     {
-
                         try
                         {
-                            //download .zip from https://raw.githubusercontent.com/bluethefoxofficial/Bluedescriptor-themedatabase/main/<zip file here>
-
-                            //extract to the path
-                            string path = Path.GetFullPath(Assembly.GetExecutingAssembly().Location + "\\bluedescriptor\\skins\\" + s.SkinName);
+                            string path = Path.GetFullPath(Assembly.Location + "\\bluedescriptor\\skins\\" + s.SkinName);
                             if (Directory.Exists(path))
                             {
-                                BTKUILib.QuickMenuAPI.ShowAlertToast("Skin already exists");
+                                BTKUILib.QuickMenuAPI.ShowAlertToast("Theme already exists");
                                 return;
                             }
-                            else
-                            {
-                                Directory.CreateDirectory(path);
 
-
-
-                                //download zip file
-                                WebClient webClient = new WebClient();
-                                string zipFilePath = path + "\\" + s.SkinName + ".zip";
-                                webClient.DownloadFile("https://raw.githubusercontent.com/bluethefoxofficial/Bluedescriptor-themedatabase/main/" + s.SkinName + ".zip", zipFilePath);
-
-                                //extract zip file
-                                try
-                                {
-                                    System.IO.Compression.ZipFile.ExtractToDirectory(zipFilePath, path);
-                                }
-                                catch (Exception ex)
-                                {
-                                    BTKUILib.QuickMenuAPI.ShowAlertToast("Failed to extract skin: " + ex.Message);
-                                    return;
-                                }
-
-                                //delete zip file
-                                File.Delete(zipFilePath);
-
-                            }
-                            //apply skin
-                            //apply skin to the setting in melon preferences
+                            Directory.CreateDirectory(path);
                             MelonPreferences.SetEntryValue("Bluedescriptor", "quickmenuskin", s.SkinName);
                             MelonPreferences.Save();
-                            new UIfunctions().quickmenyinitstyler(s.SkinName);
-
-                            BTKUILib.QuickMenuAPI.ShowAlertToast("Skin downloaded");
                         }
                         catch (Exception ex)
                         {
                             MelonLogger.Error(ex);
                         }
                     };
-                    });
-            
+                }
+            }
+
+            var skinreset = skinselection_list_settings.AddButton("Reset to default", "bd_trash", "Reset the theme to the default (requires restarting)");
+            skinreset.OnPress += () =>
+            {
+                MelonPreferences.SetEntryValue("Bluedescriptor", "quickmenuskin", "");
+                MelonPreferences.Save();
+                BTKUILib.QuickMenuAPI.ShowAlertToast("Theme reset, restart to apply.");
             };
+
+            var skinrldbtn = skinselection_list_settings.AddButton("Reload", "bd_reconnect", "Reload theme list");
+            skinrldbtn.OnPress += () =>
+            {
+                list = skins.GetSkinInfo();
+                skinselection_list_dld?.ClearChildren();
+
+                if (list.Count == 0)
+                {
+                    BTKUILib.QuickMenuAPI.ShowAlertToast("No skins found");
+                }
+                else
+                {
+                    foreach (var s in list)
+                    {
+                        var btn = skinselection_list_dld.AddButton(s.SkinName, "bd_download", "Version: " + s.SkinVersion + " Author: " + s.SkinAuthor);
+                        btn.OnPress += () =>
+                        {
+                            new skins().Installskin($"https://github.com/bluethefoxofficial/Bluedescriptor-themedatabase/raw/main/{s}.zip", new utils().GetAssemblyDirectory()+"\\bluedescriptor\\skins\\"+s+"\\");
+                        };
+                    }
+                }
+            };
+
+
+
+            /*
+             * 
+             *  messaging system (experimental)
+             * 
+             *  Global chat
+             */
+
+
+            var globalchatbtn = general.AddButton("Global message", "", "Send a message to everyone using Blue Descriptor");
+
+            globalchatbtn.OnPress += () =>
+            {
+                BTKUILib.QuickMenuAPI.OpenKeyboard("", (message) =>
+                {
+                    // Send the global message to the server
+                    webSocketClient.SendGlobalMessageAsync(message);
+                });
+            };
+
+            var users = general.AddPage("Message a user","","","Bluedescriptor");
+
+            /*
+             * 
+             * reconnect
+             */
             var reconnect = general.AddButton("Reconnect", "bd_reconnect", "Reconnect to blue descriptor network system");
             reconnect.OnPress += () => {
                 try
                 {
-                    webSocketClient.ConnectAsync("ws://localhost:9090", new ABI_RC.Core.InteractionSystem.CVR_Menu_Data_Core().username);
+                    webSocketClient.DisconnectAsync();
+                    MelonLogger.Msg("DEBUG USERNAME: "+ ABI_RC.Core.Savior.MetaPort.Instance.username);
+                    string usrn = ABI_RC.Core.Savior.MetaPort.Instance.username;
+                    webSocketClient.ConnectAsync("ws://localhost:9090", usrn);
                 }
                 catch(Exception ex)
                 {
                     MelonLogger.Error(ex);
                 }
             };
-            var vrcnp = general.AddToggle("Classic nameplate", "Bring back the VRC 2019 nameplates", vrcplate);
-            vrcnp.OnValueUpdated += val =>
+            var customnameplate = general.AddToggle("Custom nameplate", "Bring back vrc nameplates and add new custom nameplates", vrcplate);
+            customnameplate.OnValueUpdated += val =>
             {
                 vrcnameplate= val;
                 MelonPreferences.SetEntryValue("Bluedescriptor", "vrcnameplate", val);
@@ -308,8 +318,9 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
             {
                 new UIfunctions().panic();
             };
-
-
+            general.AddButton("memory fix on click","","fixes memory issues on click").OnPress += ()=>{
+                new Memoryautoclear().CleanupMemory();
+            };
             var Memoryclear = general.AddToggle("Memory repair", "Resolve memory issues and clean up memory overtime", memoryrepair);
             Memoryclear.OnValueUpdated += togler =>
             {
@@ -327,7 +338,6 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
 
                 MelonPreferences.Save();
             };
-
             /*
              * 
              * 
@@ -338,10 +348,9 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
              */
             BTKUILib.QuickMenuAPI.UserJoin += pl =>
             {
-                
                 if (pl != null)
                 {
-                    new UIfunctions().OnPlayerJoin(pl);
+                    new UIfunctions(). OnPlayerJoin(pl);
                     MelonLogger.Msg(pl.Username + " Joined your lobby");
                     OnLateUpdate();
                 }
@@ -355,9 +364,8 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
                 }
             };
             //server connections
-            webSocketClient.OnMessageReceived += OnMessageReceived;
-            webSocketClient.OnOnlineUsersReceived += OnOnlineUsersReceived;
-            webSocketClient.ConnectAsync("ws://localhost:9090", new ABI_RC.Core.InteractionSystem.CVR_Menu_Data_Core().username);
+ 
+            
             loadrewards();
 
         }
@@ -373,44 +381,41 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
 
             }
         }
+
+        
         private void OnOnlineUsersReceived(System.Collections.Generic.List<string> usernames)
         {
             //this is useless :3
         }
         public void rainbowhud()
         {
-            var animationCss = "var style = document.createElement('style');" +
-                      "style.innerHTML = `" +
-                      "@keyframes rainbowOpacity {" +
-                      "  0% {opacity: 1;}" +
-                      "  50% {opacity: 0.5;}" +
-                      "  100% {opacity: 1;}" +
-                      "}`;" +
-                      "document.head.appendChild(style);";
-
-            CohtmlHud.Instance.gameObject.GetComponent<CohtmlView>().View.ExecuteScript(animationCss);
-
-            if (rainbowhudv)
+            if (CohtmlHud.Instance.gameObject != null)
             {
+                if (rainbowhudv)
+                {
+                    var animationCss = "var style = document.createElement('style');" +
+                              "style.innerHTML = `" +
+                              ".hud-area-left-bottom .hex-hub, " +
+                              ".hud-area-left-bottom .shard-infos, " +
+                              ".hud-area-left-bottom .shard-friends, " +
+                              ".hud-area-left-bottom .shard-notifications, " +
+                              ".hud-area-left-bottom .shard-chats, " +
+                              ".hud-area-left-bottom .shard-votes {" +
+                              "  animation: rainbowOpacity 5s infinite;" +
+                              "}`;" +
+                              "document.head.appendChild(style);";
 
-                var startAnimationCss = "var elements = document.querySelectorAll('.hex-hub');" +
-                            "elements.forEach(function(element) {" +
-                            "  element.style.animation = 'rainbowOpacity 2s infinite';" +
-                            "});";
-                CohtmlHud.Instance.gameObject.GetComponent<CohtmlView>().View.ExecuteScript(startAnimationCss);
+                    CohtmlHud.Instance.gameObject.GetComponent<CohtmlView>().View.ExecuteScript(animationCss);
+                }
+                else
+                {
+                    var removeAnimationCss = "var style = document.querySelector('style');" +
+                                "if (style) {" +
+                                "  style.remove();" +
+                                "}";
+                    CohtmlHud.Instance.gameObject.GetComponent<CohtmlView>().View.ExecuteScript(removeAnimationCss);
+                }
             }
-            else
-            {
-                CohtmlHud.Instance.gameObject.GetComponent<CohtmlView>().View.Reload();
-            }
-        }
-
-        private void onpositionui()
-        {
-            int x = new CVRPlayer().localplayerposition()[0];
-            int y = new CVRPlayer().localplayerposition()[1];
-            int z = new CVRPlayer().localplayerposition()[2];
-            GUI.Label(new Rect(20, 40, 1000, 200), $"<b><size=20>Player Position: <color=red>{x}</color>, <color=green>{y}</color>, <color=blue>{z}</color></size></b>");
         }
     }
 }

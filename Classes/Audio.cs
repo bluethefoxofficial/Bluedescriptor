@@ -24,7 +24,7 @@ namespace Bluedescriptor_Rewritten.Classes
 
 
 
-            }
+        }
 
 
         /*
@@ -93,6 +93,43 @@ namespace Bluedescriptor_Rewritten.Classes
             }
 
             return clip;
+        }
+
+
+        //load clip from resources
+        public async Task<AudioClip> LoadClipFromResources(string path)
+        {
+            AudioClip clip = null;
+            using (UnityWebRequest uwr = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.WAV))
+            {
+                uwr.SendWebRequest();
+                try
+                {
+                    while (!uwr.isDone) await Task.Delay(5);
+
+                    if (uwr.isNetworkError || uwr.isHttpError) Debug.Log($"{uwr.error}");
+                    else
+                    {
+                        clip = DownloadHandlerAudioClip.GetContent(uwr);
+                    }
+                }
+                catch (Exception err)
+                {
+                    MelonLogger.Msg($"{err.Message}, {err.StackTrace}");
+                }
+            }
+
+            return clip;
+        }
+
+
+        /* load and play audio from a file*/
+
+        public async void PlayAudio(string path)
+        {
+            AudioClip clip = await LoadClipFromResources(path);
+            audioSource.clip = clip;
+            audioSource.Play();
         }
     }
  
