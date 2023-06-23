@@ -3,6 +3,10 @@
 
 # Blue descriptor
 
+### Disclamer
+
+We are not affiliated with Alpha Blend Interactive (Chilloutvr) AND this mod is not supported by ABI.
+
 
 
 ## Features
