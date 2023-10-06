@@ -4,7 +4,6 @@ using ABI_RC.Core.Player;
 using ABI_RC.Core.UI;
 using Bluedescriptor_Rewritten.Classes;
 using BTKUILib.UIObjects;
-using cohtml;
 using MelonLoader;
 using System;
 using System.Collections;
@@ -17,14 +16,8 @@ using UnityEngine.UI;
 
 namespace Bluedescriptor_Rewritten.UISYSTEM
 {
-    internal class UIfunctions
+    internal class UIfunctions 
     {
-
-        bool vrcplate = MelonPreferences.GetEntryValue<bool>("Bluedescriptor", "vrcnameplate");
-        public void Quickmenupanelinit()
-        {
-            //implement logic later :skull:
-        }
         public void panic()
         {
             
@@ -74,7 +67,14 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
             talker.gameObject.GetComponent<Image>().canvasRenderer.SetAlpha(10000f);
             while (true)
             {
-                if (pl.TalkerAmplitude > 0)
+                //Fixed for 2021
+                PlayerNameplate playerNameplateInstance = pl.PlayerNameplate;
+                Type playerNameplateType = playerNameplateInstance.GetType();
+                FieldInfo wasTalkingField = playerNameplateType.GetField("wasTalking", BindingFlags.Instance | BindingFlags.NonPublic);
+
+                // Get the value of the "wasTalking" field for the playerNameplateInstance
+                bool wasTalkingValue = (bool)wasTalkingField.GetValue(playerNameplateInstance);
+                if (wasTalkingValue)
                 {
                     talker.SetActive(true);
                 }
@@ -82,6 +82,8 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
                 {
                     talker.SetActive(false);
                 }
+
+                
                 yield return null;
             }
         }
@@ -91,7 +93,7 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
         {
             try
             {
-                if (Friends.FriendsWith(ABI_RC.Core.Savior.MetaPort.Instance.username))
+                if (Friends.FriendsWith(ABI_RC.Core.Savior.MetaPort.Instance.PlayerManager.TryGetPlayerName(ABI_RC.Core.Savior.MetaPort.Instance.ownerId)))
                 {
                     AudioSource aud = new AudioSource();
                     string assemblyDirectory = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath);
@@ -111,6 +113,7 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
             try
             {
                 // Vrchat nameplate system
+                bool vrcplate = MelonPreferences.GetEntryValue<bool>("Bluedescriptor", "vrcnameplate");
                 if (vrcplate)
                 {
                     if (player == null) return;
@@ -148,6 +151,7 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
                     RainbowColorChange colorChanger = player.PlayerNameplate.gameObject.AddComponent<RainbowColorChange>();
                     colorChanger.imageToChange = player.PlayerNameplate.friendsImage;
                     colorChanger.textToChange = player.PlayerNameplate.usrNameText;
+                    player.PlayerNameplate.usrNameText.outlineWidth = 5;
                     colorChanger.StartChange();
                     colorChanger.StartChangeTextOutline();
                     // Load and setup Talker icon
@@ -223,60 +227,6 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
             corountinemgr.AddComponent<Classes.CoroutineManager>();
             corountinemgr.GetComponent<Classes.CoroutineManager>().StartCoroutine(new UIfunctions().IsTalking(obj));
         }
-
-
-        /* quick menu related */
-
-
-
-        public void alarmsettings(Category general)
-        {
-            var alarm = general.AddPage("Alarm", "", "Alarm settings", "Bluedescriptor");
-
-
-
-            object[] emptyobj = new object[0];
-
-            var alarmsettings = alarm.AddCategory("alarm settings");
-            var alarmtoggle = alarmsettings.AddToggle("Alarm toggle", "Enable or disable alarm.", MelonPreferences.GetEntryValue<bool>("Bluedescriptor", "alarm"));
-            var alarmsound = alarmsettings.AddButton("Change alarm sounds", "", "Change the default alarm sound.");
-            alarmtoggle.OnValueUpdated += b =>
-            {
-                MelonPreferences.SetEntryValue<bool>("Bluedescriptor", "alarm", b);
-                MelonPreferences.Save();
-                if (b)
-                {
-                    CohtmlHud.Instance.ViewDropTextImmediate($"<color=blue>[BD]</color>", $"Blue Descriptor Alarm", "Alarm has been enabled");
-                }
-                else
-                {
-                    CohtmlHud.Instance.ViewDropTextImmediate($"<color=blue>[BD]</color>", $"Blue Descriptor Alarm", "Alarm has been disabled");
-
-                }
-            };
-
-
-            var hourslider = alarm.AddSlider("Hour(s)", "Set the hour for the alarm", MelonPreferences.GetEntryValue<int>("Bluedescriptor", "alarmhour"), 0, 24);
-            var minuteslider = alarm.AddSlider("Minute(s)", "Set the minute for the alarm", MelonPreferences.GetEntryValue<int>("Bluedescriptor", "alarmminute"), 0, 59);
-            hourslider.DecimalPlaces = 0;
-            minuteslider.DecimalPlaces = 0;
-
-            alarm.AddCategory("Alarm set to: " + hourslider.SliderValue + ":" + minuteslider.SliderValue);
-
-            hourslider.OnValueUpdated += v =>
-            {
-                MelonPreferences.SetEntryValue<int>("Bluedescriptor", "alarmhour", (int)v);
-                MelonPreferences.Save();
-            };
-            minuteslider.OnValueUpdated += v =>
-            {
-                MelonPreferences.SetEntryValue<int>("Bluedescriptor", "alarmminute", (int)v);
-                MelonPreferences.Save();
-            };
-        }
-
-
-
         public void nameplatesettings(Category general)
         {
             var nameplatesettings = general.AddPage("Nameplate settings", "bd_npsettings", "Options to customise your nameplate", "Bluedescriptor");
@@ -295,7 +245,6 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
             gradnp.OnPress += () => { MelonPreferences.SetEntryValue<int>("Bluedescriptor", "nameplate", 3); MelonPreferences.Save(); CohtmlHud.Instance.ViewDropTextImmediate($"<color=blue>[BD]</color>", $"Blue Descriptor Nameplate", "nameplate set to BD Gradient rejoin to apply."); };
             smli.OnPress += () => { MelonPreferences.SetEntryValue<int>("Bluedescriptor", "nameplate", 4); MelonPreferences.Save(); CohtmlHud.Instance.ViewDropTextImmediate($"<color=blue>[BD]</color>", $"Blue Descriptor Nameplate", "nameplate set to BD small line rejoin to apply."); };
             granadenp.OnPress += () => { MelonPreferences.SetEntryValue<int>("Bluedescriptor", "nameplate", 5); MelonPreferences.Save(); CohtmlHud.Instance.ViewDropTextImmediate($"<color=blue>[BD]</color>", $"Blue Descriptor Nameplate", "nameplate set to BD granade rejoin to apply."); };
-
         }
 
         /*
@@ -305,7 +254,6 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
  */
         public void quickmenyinitstyler(string downloadedtheme)
         {
-
             try
             {
                 // Load a skin from a folder with 2 files: skin.css and function.js. Look for skin.css.
@@ -330,9 +278,9 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
                     MelonLogger.Msg("JS Path "+jsPath);
                     string cssContent = File.Exists(cssPath) ? File.ReadAllText(cssPath) : "";
                     string jsContent = File.Exists(jsPath) ? File.ReadAllText(jsPath) : "";
-                    // Execute the JavaScript code with the loaded CSS and JavaScript contents
+                   
                     string jsCode = $"document.querySelector('head').innerHTML += '<style id=\"bdstyler\">{cssContent}</style>';\n{jsContent}";
-                    //   ABI_RC.Core.InteractionSystem.CVR_MenuManager.Instance.quickMenu.View.ExecuteScript(jsCode);
+                   
                     var cohtml = GameObject.Find("Cohtml");
 
                     if (cohtml == null)
@@ -348,8 +296,7 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
                         MelonLogger.Error("Error: quick menu not found.");
                         return;
                     }
-                    MelonLogger.Msg("Quickmenu " + qm.GetComponent<CohtmlView>().View.ToString());
-                    qm.GetComponent<CohtmlView>().View.ExecuteScript(jsCode);
+              
                 }
             }
             catch (Exception ex)

@@ -13,15 +13,10 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
         private void euladisagree()
         {
             //unload this mod
-            MelonLoader.MelonHandler.Mods.Remove(MelonLoader.MelonHandler.Mods.Find(x => x.Info.Name == "Blue Descriptor"));
+           // MelonLoader.ResolvedMelons().Mods.Remove(MelonLoader.MelonHandler.Mods.Find(x => x.Info.Name == "Blue Descriptor"));
         }
         public void eulacheck()
         {
-
-           // MelonPreferences.SetEntryValue<bool>("Bluedescriptor", "networkeula", false); //kill me :3
-
-          //  MelonPreferences.Save();
-
             if (checkeulastatus == false) {
                         // public static void ShowConfirm(string title, string content, Action onYes, Action onNo = null, string yesText = "Yes", string noText = "No")
                 BTKUILib.QuickMenuAPI.ShowConfirm("EULA Agreement",eulamsg(), () =>
@@ -37,7 +32,6 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
             //this is just to cover me legally
 return @"
 By using the BlueDescriptor Mod, you agree to the following terms:
-
     We may collect and use your username for Mod functionality.
     We collect usage information to improve the Mod and ensure compliance.
     Collected data will be kept confidential and shared only as necessary.
@@ -45,7 +39,6 @@ By using the BlueDescriptor Mod, you agree to the following terms:
     The Mod and its intellectual property rights belong to the creators.
     The Mod is provided as is, and we are not liable for any issues.
     You can terminate the agreement by discontinuing Mod use.
-
 Note: This is a simplified summary and does not cover all details. Please refer to the full agreement for complete information.
 ";
         }

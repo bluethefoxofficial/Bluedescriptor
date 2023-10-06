@@ -15,12 +15,10 @@ namespace Bluedescriptor_Rewritten.Classes
         {
             StartCoroutine(ChangeColor());
         }
-
         public void StopChange()
         {
             changeColor = false;
         }
-
         private IEnumerator ChangeColor()
         {
             while (changeColor)

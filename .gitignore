@@ -11,10 +11,7 @@
 *.sln.docstates
 
 
-# Audio Files
-*.ogg
-*.wav
-*.mp3
+
 
 
 # User-specific files (MonoDevelop/Xamarin Studio)

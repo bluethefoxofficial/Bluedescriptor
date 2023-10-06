@@ -1,4 +1,4 @@
-﻿using ABI_RC.Core.UI;
+﻿
 using Bluedescriptor_Rewritten.Classes;
 using Bluedescriptor_Rewritten.UISYSTEM;
 using BTKUILib.UIObjects;
@@ -10,32 +10,40 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Harmony;
+using UnityEngine.XR;
+using HarmonyLib;
+using System;
 
 [assembly: MelonInfo(typeof(Bluedescriptor_Rewritten.Main), "Blue Descriptor", "1.0.0", "Bluethefox")]
 
 namespace Bluedescriptor_Rewritten
-{
+{   
+
     public class Main : MelonMod
     {
-
+        
         UI uisystem = new UI();
 
     
         public Main()
         {
-            new Memoryautoclear().CleanupMemory() ;
-        }
+         }
 
-        public override void OnEarlyInitializeMelon()
-        {
-           
-        }
+    
         public override void OnInitializeMelon()
         {
-            new Audio().Audioprep("Bluedescriptor_Rewritten.res.Audio.playful-notification.ogg","noti");
-            new Audio().Audioprep("Bluedescriptor_Rewritten.res.Audio.join.ogg","join");
-            new Audio().Audioprep("Bluedescriptor_Rewritten.res.Audio.eula.ogg","eula");
-            MelonPreferences.CreateCategory("Bluedescriptor","general");
+            MelonLogger.Msg("done");
+      
+            new Audio().Audioprep("Bluedescriptor_Rewritten.res.Audio.join.wav","join");
+            new Audio().Audioprep("Bluedescriptor_Rewritten.res.Audio.leave.wav","leave");
+            new Audio().Audioprep("Bluedescriptor_Rewritten.res.Audio.welcome.wav","welcome");
+            new Audio().Audioprep("Bluedescriptor_Rewritten.res.Audio.uimusic.wav","music");
+            new Audio().Audioprep("Bluedescriptor_Rewritten.res.Audio.uiopen.wav","open");
+            new Audio().Audioprep("Bluedescriptor_Rewritten.res.Audio.close.wav","close");
+            new Audio().Audioprep("Bluedescriptor_Rewritten.res.Audio.noti.wav","noti");
+
+            MelonPreferences.CreateCategory("Bluedescriptor","Blue Descriptor (client)");
             MelonPreferences.CreateEntry("Bluedescriptor", "vrcnameplate", false);
             MelonPreferences.CreateEntry("Bluedescriptor", "rainbowhud", false);
             MelonPreferences.CreateEntry("Bluedescriptor", "nameplate", 0);
@@ -60,49 +68,59 @@ namespace Bluedescriptor_Rewritten
 
             //nameplate settings
             MelonPreferences.CreateEntry("Bluedescriptor", "nameplate-speed", 0.5f);
+
+            //internals
+            EmbedExtract.ExtractResource("Bluedescriptor_Rewritten.res.ffmpeg.zip", Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath) + "\\bluedescriptor\\executables\\ffmpeg\\ffmpeg.zip");
+            if (ZipExtractor.ExtractZip(Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath) + "\\bluedescriptor\\executables\\ffmpeg\\ffmpeg.zip", Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath) + "\\bluedescriptor\\executables\\ffmpeg"))
+            {
+                MelonLogger.Warning("it worked");
+            }
+            else
+            {
+                MelonLogger.Error("no ffmpeg :(");
+            }
+            if (!Directory.Exists(Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath) + "\\bluedescriptor\\recordings\\"))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath) + "\\bluedescriptor\\recordings\\");
+            }
+
+
+
+            //icons
             new UISYSTEM.Icons().iconsinit();
             uisystem.uiinit();
+
+            //MOD NETWORK
+
+
         }
 
 
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
-            uisystem.rainbowhud();
-            new Classes.Memoryautoclear().OnFixedUpdate();
-
-
-          
-
+   
             new UIfunctions().quickmenyinitstyler(MelonPreferences.GetEntryValue<string>("Bluedescriptor", "quickmenuskin"));
-
-
+           
             MelonLogger.Msg("Buld index: " + buildIndex + " | Scene name: " + sceneName);
 
-
-            if (sceneName == "Headquarters")
+            if(buildIndex == 1)
             {
-                if (ABI_RC.Core.Savior.MetaPort.Instance.username != null)
-                {
-                    uisystem.webSocketClient.ConnectAsync("ws://localhost:9090", ABI_RC.Core.Savior.MetaPort.Instance.username);
+               
+             
 
-                    uisystem.webSocketClient.OnMessageReceived += s =>
-                    {
+                    // Create a new GameObject and attach the AudioManager
+                    GameObject audioManagerObject = new GameObject("AudioManagerObject");
+                    AudioManager audioManager = audioManagerObject.AddComponent<AudioManager>();
 
-                        MelonLogger.Msg($"Received message: {s}");
+                    audioManager.PlayAudio("welcome.wav");
+                    audioManager.PlayAudio("music.wav");
 
-                    };
-                    uisystem.webSocketClient.OnConnected += () =>
-                    {
-
-                        MelonLogger.Msg("connected to blue descriptor network system");
-
-                    };
-                }
+                
             }
+        
         }
 
-
-
+    
     }
 }

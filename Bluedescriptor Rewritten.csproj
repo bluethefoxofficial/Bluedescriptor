@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Bluedescriptor_Rewritten</RootNamespace>
     <AssemblyName>Bluedescriptor Rewritten</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -32,7 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp">
+    <Reference Include="0Harmony, Version=2.10.1.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="BTKUILib">
@@ -42,18 +44,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\cohtml.Net.dll</HintPath>
     </Reference>
-    <Reference Include="Cohtml.RenderingBackend, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\Cohtml.RenderingBackend.dll</HintPath>
-    </Reference>
-    <Reference Include="Cohtml.Runtime, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\Cohtml.Runtime.dll</HintPath>
-    </Reference>
     <Reference Include="MelonLoader">
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\MelonLoader\net35\MelonLoader.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="netstandard">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\netstandard.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\Bluedescriptor\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -78,11 +75,28 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\Unity.TextMeshPro.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.XR.Management, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\Unity.XR.Management.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.XR.OpenVR, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\Unity.XR.OpenVR.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.XR.OpenXR, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\Unity.XR.OpenXR.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.AudioModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.CoreModule">
+    <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -113,30 +127,41 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
     </Reference>
-    <Reference Include="websocket-sharp, Version=1.0.1.0, Culture=neutral, PublicKeyToken=5660b08a1845a91e, processorArchitecture=MSIL">
-      <HintPath>packages\WebSocketSharp-netstandard.1.0.1\lib\net45\websocket-sharp.dll</HintPath>
+    <Reference Include="UnityEngine.VRModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\UnityEngine.VRModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.XRModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\UnityEngine.XRModule.dll</HintPath>
+    </Reference>
+    <Reference Include="VivoxUnity">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\VivoxUnity.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Audio.cs" />
+    <Compile Include="Classes\AudioManager.cs" />
     <Compile Include="Classes\BlackAndWhiteConverter.cs" />
     <Compile Include="Classes\CoroutineManager.cs" />
     <Compile Include="Classes\CVRDETAILEXTRACTOR.cs" />
     <Compile Include="Classes\CVRPlayer.cs" />
     <Compile Include="Classes\cvrworld.cs" />
-    <Compile Include="Classes\Memoryautoclear.cs" />
+    <Compile Include="Classes\EmbedExtract.cs" />
+    <Compile Include="Classes\moddingnetwork.cs" />
     <Compile Include="Classes\Props.cs" />
     <Compile Include="Classes\RainbowColorChange.cs" />
+    <Compile Include="Classes\ScreenRecorder.cs" />
     <Compile Include="Classes\SkinInfo.cs" />
     <Compile Include="Classes\skins.cs" />
+    <Compile Include="Classes\UIListCreator.cs" />
     <Compile Include="Classes\utils.cs" />
+    <Compile Include="Classes\ZipExtractor.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="network\BDWS.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UISYSTEM\Alarm.cs" />
     <Compile Include="UISYSTEM\EULA.cs" />
     <Compile Include="UISYSTEM\Icons.cs" />
-    <Compile Include="UISYSTEM\reward_system.cs" />
     <Compile Include="UISYSTEM\UI.cs" />
     <Compile Include="UISYSTEM\UIfunctions.cs" />
   </ItemGroup>
@@ -154,18 +179,18 @@
     <EmbeddedResource Include="res\bd_warn.png" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="network\" />
     <Folder Include="res\menu\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <EmbeddedResource Include="res\Font\VRC\Md_Gothic11.ttf" />
-    <EmbeddedResource Include="res\Audio\playful-notification.ogg" />
-    <EmbeddedResource Include="res\Audio\alarm.ogg" />
-    <EmbeddedResource Include="res\Audio\join.ogg" />
-    <EmbeddedResource Include="res\Audio\eula.ogg" />
+    <EmbeddedResource Include="res\ffmpeg.zip" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="res\Audio\READ THIS.txt" />
+    <EmbeddedResource Include="res\antitoxic.png" />
+    <EmbeddedResource Include="res\Audio\join.wav" />
+    <EmbeddedResource Include="res\Audio\leave.wav" />
     <EmbeddedResource Include="res\Nameplates\grenade.png" />
     <EmbeddedResource Include="res\Nameplates\smli.png" />
     <EmbeddedResource Include="res\Nameplates\Grad.png" />
@@ -181,6 +206,35 @@
     <EmbeddedResource Include="res\Rewards.png" />
     <EmbeddedResource Include="res\reconnect.png" />
     <EmbeddedResource Include="res\Nameplates\VRC\Visitor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\Audio\welcome.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\Audio\uimusic.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\ir.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\Audio\uiopen.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\BLUEDESCRIPTOR-october.png" />
+    <EmbeddedResource Include="res\BLUEDESCRIPTOR-Pride.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\recfol.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\stoprec.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\Audio\noti.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\Audio\autherror.wav" />
+    <EmbeddedResource Include="res\Audio\close.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

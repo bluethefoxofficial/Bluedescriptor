@@ -11,28 +11,12 @@ namespace Bluedescriptor_Rewritten.Classes
 {
     internal class Audio
     {
-
-        /*
-         * 
-         * 
-         * repair microphone lag
-         * 
-         */
-
-        public void miclagfix(){
-
-
-
-
-        }
-
-
         /*
          * 
          * this is a work in progress no where near ready for production
          * 
          */
-
+     
         
         public void Audioprep(string res, string filename)
         {
@@ -54,9 +38,10 @@ namespace Bluedescriptor_Rewritten.Classes
                 // Create a directory to save the resource if it doesn't exist
                 string saveDirectory = Path.Combine(assemblyDirectory, "bluedescriptor");
                 Directory.CreateDirectory(saveDirectory);
+           
 
                 // Create a file stream to save the resource
-                string filePath = Path.Combine(saveDirectory, filename + ".ogg");
+                string filePath = Path.Combine(saveDirectory, filename + ".wav");
                 using (FileStream fileStream = File.Create(filePath))
                 {
                     // Copy the resource stream to the file stream

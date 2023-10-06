@@ -1,4 +1,4 @@
-﻿using ABI_RC.Core.UI;
+﻿
 using Bluedescriptor_Rewritten.Classes;
 using MelonLoader;
 using System;
@@ -91,7 +91,7 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
                             aud.Play();
                         });
                         //show alarm message
-                        CohtmlHud.Instance.ViewDropTextImmediate($"<color=blue>[BD]</color>", $"Blue Descriptor Alarm", $"The alarm was triggered at {hour}:{minute}");
+                     //   CohtmlHud.Instance.ViewDropTextImmediate($"<color=blue>[BD]</color>", $"Blue Descriptor Alarm", $"The alarm was triggered at {hour}:{minute}");
                         //wait 1 minute
                         yield return new WaitForSeconds(60);
                     }
