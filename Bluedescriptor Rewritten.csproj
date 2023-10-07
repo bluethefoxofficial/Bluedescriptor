@@ -110,6 +110,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\UnityEngine.JSONSerializeModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="UnityEngine.UI">
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
@@ -179,12 +180,10 @@
     <EmbeddedResource Include="res\bd_warn.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="network\" />
     <Folder Include="res\menu\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <EmbeddedResource Include="res\Font\VRC\Md_Gothic11.ttf" />
     <EmbeddedResource Include="res\ffmpeg.zip" />
   </ItemGroup>
   <ItemGroup>
@@ -235,6 +234,9 @@
   <ItemGroup>
     <EmbeddedResource Include="res\Audio\autherror.wav" />
     <EmbeddedResource Include="res\Audio\close.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\Font\atlas.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

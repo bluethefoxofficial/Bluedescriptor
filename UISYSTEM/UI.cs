@@ -24,10 +24,11 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
     {
         private Page bluedescriptorpage;
         private Alarm alrm;
-
+        GameObject audioManagerObject;
+        AudioManager audioManager;
         UIListCreator lis;
     
-        public List<CVRPlayerEntity> plist = new List<CVRPlayerEntity>();
+        public List<string[]> plist = new List<string[]>();
         bool vrcplate = MelonPreferences.GetEntryValue<bool>("Bluedescriptor", "vrcnameplate");
         bool memoryrepair = MelonPreferences.GetEntryValue<bool>("Bluedescriptor", "memorycleanup");
         bool rainbowhudv = MelonPreferences.GetEntryValue<bool>("Bluedescriptor", "rainbowhud");
@@ -36,8 +37,7 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
             plist.Clear();
             
         }
-        //rewards system
-  
+        bool firstload = false;
 
       public void  uiinit()
         {
@@ -45,31 +45,66 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
                 menuinit();
 
 
+            CVRGameEventSystem.World.OnUnload.AddListener(wi =>
+            {
+                plist.Clear();
+                lis.applylist(plist);
+
+            });
+
             /* UI EVENTS */
             //open ui
             CVRGameEventSystem.QuickMenu.OnOpen.AddListener(() =>
             {
-                GameObject audioManagerObject = new GameObject("AudioManagerObject");
-                AudioManager audioManager = audioManagerObject.AddComponent<AudioManager>();
-
+              
+           
                 audioManager.PlayAudio("leave.wav");
-                lis.show();
+              
+
+               
+                lis.Show();
+                lis.resetlistui();
 
             });
             //close ui
             CVRGameEventSystem.QuickMenu.OnClose.AddListener(() =>
             {
-                GameObject audioManagerObject = new GameObject("AudioManagerObject");
-                AudioManager audioManager = audioManagerObject.AddComponent<AudioManager>();
+          
 
                 audioManager.PlayAudio("close.wav");
-
-                lis.hide();
+                lis.resetlistui();
+                lis.Hide();
                 
 
             });
-            
+            /* ither */
+            CVRGameEventSystem.Instance.OnConnectionLost.AddListener(ins =>
+            {
+                audioManager.PlayAudio("conerror.wav");
+     
+            });
 
+            CVRGameEventSystem.Instance.OnConnected.AddListener(ins => {
+                audioManagerObject = new GameObject("AudioManagerObject");
+                audioManager = audioManagerObject.AddComponent<AudioManager>();
+               
+
+                if (firstload) return;
+                lis.GenerateUICanvas();
+
+                firstload = true;
+            
+            });
+            CVRGameEventSystem.Home.OnJoin.AddListener(() =>
+            {
+             audioManagerObject = new GameObject("AudioManagerObject");
+            audioManager = audioManagerObject.AddComponent<AudioManager>();
+                if (firstload) return;
+                lis.GenerateUICanvas();
+
+                firstload = true;
+
+            });
 
         }
         GameObject corountinemgr = new GameObject();
@@ -79,7 +114,7 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
         public void menuinit()
         {
             corountinemgr.AddComponent<Classes.CoroutineManager>();
-
+            
             bluedescriptorpage = new Page("Bluedescriptor", "Bluedescriptorpage", true, "bd_logo");
 
             new EULA().eulacheck();
@@ -91,6 +126,7 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
             var profilecat = bluedescriptorpage.AddCategory("Your Profile");
 
              lis = new UIListCreator();
+         
 
 
             bluedescriptorpage.MenuTitle = "Blue descriptor properties";
@@ -146,10 +182,10 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
             {                                            
                 Process.Start(Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath) + "\\bluedescriptor\\recordings\\");
             };
-       
 
-      
-            lis.plList = plist;
+
+
+            lis.applylist(plist);
      
 
             /*
@@ -160,50 +196,40 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
              * 
              * 
              */
+       
             BTKUILib.QuickMenuAPI.UserJoin += pl =>
             {
-                if (pl != null)
-                {
-                    new UIfunctions().OnPlayerJoin(pl);
-                    MelonLogger.Msg(pl.Username + " Joined your lobby");
+                plist.Add(new string[] { pl.Username });
 
-                    // Create a new GameObject and attach the AudioManager
-                    GameObject audioManagerObject = new GameObject("AudioManagerObject");
-                    AudioManager audioManager = audioManagerObject.AddComponent<AudioManager>();
+                lis.applylist(plist);
+                //   OnLateUpdate();
+                lis.resetlistui();
+                new UIfunctions().OnPlayerJoin(pl);
+            MelonLogger.Msg(pl.Username + " Joined your lobby");
 
-                    audioManager.PlayAudio("join.wav");
 
-                    // Optionally, destroy the AudioManagerObject after some time if needed.
-                    // Destroy(audioManagerObject, someDuration); 
-                    plist.Add(pl);
-                   lis.GenerateUICanvas();
-
-                    OnLateUpdate();
-                }
+             audioManager.PlayAudio("join.wav");
+              
             };
+          
             BTKUILib.QuickMenuAPI.UserLeave += pl =>
             {
                
-                if (pl != null)
-                {
-                   
-                    MelonLogger.Msg(pl.Username + " left your lobby");
+               
 
-                    // Create a new GameObject and attach the AudioManager
-                    GameObject audioManagerObject = new GameObject("AudioManagerObject");
-                    AudioManager audioManager = audioManagerObject.AddComponent<AudioManager>();
+                        MelonLogger.Msg(pl.Username + " left your lobby");
 
-                    audioManager.PlayAudio("leave.wav");
 
-                    // Optionally, destroy the AudioManagerObject after some time if needed.
-                   
-                    plist.Remove(pl);
 
-                      lis.GenerateUICanvas();
+                        audioManager.PlayAudio("leave.wav");
 
-                    OnLateUpdate();
-                }
-            };
+                        // Optionally, destroy the AudioManagerObject after some time if needed.
+
+                        plist.Remove(new string[] { pl.Username });
+                        lis.applylist(plist);
+           
+            
+        };
         }
     }
 }

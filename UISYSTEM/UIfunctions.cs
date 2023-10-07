@@ -91,25 +91,7 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
 
         public void OnPlayerJoin(CVRPlayerEntity player)
         {
-            try
-            {
-                if (Friends.FriendsWith(ABI_RC.Core.Savior.MetaPort.Instance.PlayerManager.TryGetPlayerName(ABI_RC.Core.Savior.MetaPort.Instance.ownerId)))
-                {
-                    AudioSource aud = new AudioSource();
-                    string assemblyDirectory = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath);
-                    Audio audio = new Audio();
-                    audio.LoadClip(Path.Combine(assemblyDirectory, "bluedescriptor") + "/join.ogg").ContinueWith(ac =>
-                    {
-                        aud.clip = ac.Result;
-                        aud.Play();
-                        MelonLogger.Msg("UWUOWOUWU joined");
-                    });
-                }
-            }
-            catch (Exception e)
-            {
-                MelonLogger.Error(e);
-            }
+          
             try
             {
                 // Vrchat nameplate system
@@ -165,7 +147,7 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
                 // Handle exceptions
             }
         }
-        private Texture2D LoadTextureFromAssembly(Assembly asm, string resourcePath)
+        public Texture2D LoadTextureFromAssembly(Assembly asm, string resourcePath)
         {
             using (Stream stream = asm.GetManifestResourceStream(resourcePath))
             {
@@ -182,6 +164,9 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
         }
         private void ApplyNameplateSettings(CVRPlayerEntity player, Sprite sprite)
         {
+
+            player.PlayerNameplate.UpdateNamePlate();
+            
             player.PlayerNameplate.nameplateBackground.sprite = sprite;
             player.PlayerNameplate.nameplateBackground.gameObject.GetComponent<Image>().color = Color.white;
             player.PlayerNameplate.nameplateBackground.color = Color.white;
@@ -195,6 +180,11 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
             player.PlayerNameplate.playerImage.canvasRenderer.SetAlpha((float)10000f);
             player.PlayerNameplate.usrNameText.canvasRenderer.SetAlpha((float)10000f);
             player.PlayerNameplate.friendsImage.color = new Color32(1, 1, 1, 255);
+            player.PlayerNameplate.usrNameText.enableVertexGradient = true;
+            player.PlayerNameplate.UpdateNamePlate();
+
+
+
         }
         private void SetupTalkerIcon(CVRPlayerEntity player, Sprite sprite)
         {

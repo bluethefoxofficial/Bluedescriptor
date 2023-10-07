@@ -41,6 +41,7 @@ namespace Bluedescriptor_Rewritten
             new Audio().Audioprep("Bluedescriptor_Rewritten.res.Audio.uimusic.wav","music");
             new Audio().Audioprep("Bluedescriptor_Rewritten.res.Audio.uiopen.wav","open");
             new Audio().Audioprep("Bluedescriptor_Rewritten.res.Audio.close.wav","close");
+            new Audio().Audioprep("Bluedescriptor_Rewritten.res.Audio.autherror.wav","conerror");
             new Audio().Audioprep("Bluedescriptor_Rewritten.res.Audio.noti.wav","noti");
 
             MelonPreferences.CreateCategory("Bluedescriptor","Blue Descriptor (client)");
