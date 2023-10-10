@@ -17,12 +17,17 @@ using System.Diagnostics;
 using System.IO;
 using System;
 using ABI_RC.Systems.GameEventSystem;
+using ABI.CCK.Components;
+using ABI_RC.Core.Savior;
+using ABI_RC.Core.Networking.IO.Self;
+using ABI_RC.Core.Networking.IO.Instancing;
 
 namespace Bluedescriptor_Rewritten.UISYSTEM
 {
     internal class UI  : MelonMod
     {
         private Page bluedescriptorpage;
+        private bool disconnected = false;
         private Alarm alrm;
         GameObject audioManagerObject;
         AudioManager audioManager;
@@ -47,11 +52,25 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
 
             CVRGameEventSystem.World.OnUnload.AddListener(wi =>
             {
-                plist.Clear();
-                lis.applylist(plist);
+                try
+                {
+                    plist.Clear();
+                    lis.applylist(plist);
+                }catch (Exception ex)
+                {
+
+                }
 
             });
 
+            CVRGameEventSystem.Instance.OnDisconnected.AddListener( ins =>
+            {
+                disconnected = true;
+            });
+            CVRGameEventSystem.Instance.OnConnected.AddListener(ins =>
+            {
+                disconnected = false;
+            });
             /* UI EVENTS */
             //open ui
             CVRGameEventSystem.QuickMenu.OnOpen.AddListener(() =>
@@ -59,13 +78,19 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
               
            
                 audioManager.PlayAudio("leave.wav");
-              
+                try
+                {
 
-               
-                lis.Show();
-                lis.resetlistui();
+                    lis.Show();
+                    lis.resetlistui();
+                }catch (Exception ex)
+                {
+
+                }
 
             });
+
+        
             //close ui
             CVRGameEventSystem.QuickMenu.OnClose.AddListener(() =>
             {
@@ -80,6 +105,7 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
             /* ither */
             CVRGameEventSystem.Instance.OnConnectionLost.AddListener(ins =>
             {
+                disconnected = true;
                 audioManager.PlayAudio("conerror.wav");
      
             });
@@ -87,7 +113,7 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
             CVRGameEventSystem.Instance.OnConnected.AddListener(ins => {
                 audioManagerObject = new GameObject("AudioManagerObject");
                 audioManager = audioManagerObject.AddComponent<AudioManager>();
-               
+                disconnected = false;
 
                 if (firstload) return;
                 lis.GenerateUICanvas();
@@ -99,6 +125,8 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
             {
              audioManagerObject = new GameObject("AudioManagerObject");
             audioManager = audioManagerObject.AddComponent<AudioManager>();
+
+                disconnected = false;
                 if (firstload) return;
                 lis.GenerateUICanvas();
 
@@ -107,6 +135,7 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
             });
 
         }
+      
         GameObject corountinemgr = new GameObject();
 
        
@@ -156,11 +185,18 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
                 new UIfunctions().panic();
             };
       
-            var antitoxic = general.AddButton("Antitoxin","bd_antitoxic","disconnect when you lag");
-            antitoxic.OnPress += () =>
-            {
-             
+            var antitoxic = general.AddPage("Antitoxin","bd_antitoxic","disconnect when you lag","bluedescriptor");
+            antitoxic.AddSlider("wip", "this will allow you to adjust fps when it is complete", 10.0f, 2f, 20f);
+        
+
+            var rejoin = general.AddButton("Rejoin current instance", "bd_reconnect", "reconnect");
+            rejoin.OnPress += () => {
+
+              //  ABI_RC.Core.Networking.IO.Instancing.Instances.SetJoinTarget(ABI_RC.Core.)
+
+
             };
+         
             var recordsystem = new ScreenRecorder();
             var recorder = general.AddPage("recorder","bd_ir","screen recorder","bluedescriptor");
 
@@ -172,12 +208,14 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
 
             recordbtn.OnPress += () =>
             {
-                recordsystem.StartRecording();
+                CoroutineRunner.Instance.StartRoutine(recordsystem.StartRecording());
             };
+
             stoprecordbtn.OnPress += () =>
             {
-                recordsystem.StopRecording();
+                CoroutineRunner.Instance.StartRoutine(recordsystem.StopRecording());
             };
+
             openrecordingsfolder.OnPress += () =>
             {                                            
                 Process.Start(Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath) + "\\bluedescriptor\\recordings\\");
@@ -207,8 +245,10 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
                 new UIfunctions().OnPlayerJoin(pl);
             MelonLogger.Msg(pl.Username + " Joined your lobby");
 
-
-             audioManager.PlayAudio("join.wav");
+                if (disconnected)
+                {
+                    audioManager.PlayAudio("join.wav");
+                }
               
             };
           
@@ -219,9 +259,12 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
 
                         MelonLogger.Msg(pl.Username + " left your lobby");
 
+                if (disconnected)
+                {
 
+                    audioManager.PlayAudio("leave.wav");
 
-                        audioManager.PlayAudio("leave.wav");
+                }
 
                         // Optionally, destroy the AudioManagerObject after some time if needed.
 

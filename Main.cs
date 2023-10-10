@@ -15,7 +15,7 @@ using UnityEngine.XR;
 using HarmonyLib;
 using System;
 
-[assembly: MelonInfo(typeof(Bluedescriptor_Rewritten.Main), "Blue Descriptor", "1.0.0", "Bluethefox")]
+[assembly: MelonInfo(typeof(Bluedescriptor_Rewritten.Main), "Blue Descriptor", "2.1.5", "Bluethefox")]
 
 namespace Bluedescriptor_Rewritten
 {   
@@ -29,8 +29,11 @@ namespace Bluedescriptor_Rewritten
         public Main()
         {
          }
+        public override void OnFixedUpdate()
+        {
+           new AntiToxin().MonitorFPS();
+        }
 
-    
         public override void OnInitializeMelon()
         {
             MelonLogger.Msg("done");
@@ -86,7 +89,8 @@ namespace Bluedescriptor_Rewritten
             }
 
 
-
+            new FontLogger().LogAllFonts();
+            new FontLogger().LogAllTMPFontsAndMaterials();
             //icons
             new UISYSTEM.Icons().iconsinit();
             uisystem.uiinit();
@@ -95,7 +99,7 @@ namespace Bluedescriptor_Rewritten
 
 
         }
-
+     
 
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)

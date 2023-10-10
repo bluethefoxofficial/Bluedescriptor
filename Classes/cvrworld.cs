@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ABI.CCK.Components;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,6 +28,11 @@ namespace Bluedescriptor_Rewritten.Classes
          * get all scenes in game ()
          * 
          */
+
+        public CVRWorld currentworld()
+        {
+            return CVRWorld.Instance;
+        }
 
         public Scene[] getallscenesingame()
         {

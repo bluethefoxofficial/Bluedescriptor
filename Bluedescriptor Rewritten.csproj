@@ -87,6 +87,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\Unity.XR.OpenXR.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.AnimationModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.AssetBundleModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
@@ -109,6 +113,10 @@
     <Reference Include="UnityEngine.JSONSerializeModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\UnityEngine.JSONSerializeModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ScreenCaptureModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\UnityEngine.ScreenCaptureModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="UnityEngine.UI">
@@ -141,20 +149,26 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AntiToxin.cs" />
     <Compile Include="Classes\Audio.cs" />
     <Compile Include="Classes\AudioManager.cs" />
     <Compile Include="Classes\BlackAndWhiteConverter.cs" />
     <Compile Include="Classes\CoroutineManager.cs" />
+    <Compile Include="Classes\CoroutineRunner.cs" />
     <Compile Include="Classes\CVRDETAILEXTRACTOR.cs" />
     <Compile Include="Classes\CVRPlayer.cs" />
     <Compile Include="Classes\cvrworld.cs" />
     <Compile Include="Classes\EmbedExtract.cs" />
+    <Compile Include="Classes\Fontlogger.cs" />
+    <Compile Include="Classes\MaterialFinder.cs" />
     <Compile Include="Classes\moddingnetwork.cs" />
     <Compile Include="Classes\Props.cs" />
     <Compile Include="Classes\RainbowColorChange.cs" />
+    <Compile Include="Classes\SavWav.cs" />
     <Compile Include="Classes\ScreenRecorder.cs" />
     <Compile Include="Classes\SkinInfo.cs" />
     <Compile Include="Classes\skins.cs" />
+    <Compile Include="Classes\TMPAssetFinder.cs" />
     <Compile Include="Classes\UIListCreator.cs" />
     <Compile Include="Classes\utils.cs" />
     <Compile Include="Classes\ZipExtractor.cs" />
@@ -237,6 +251,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="res\Font\atlas.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\PLI.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -11,6 +11,7 @@ using Bluedescriptor_Rewritten.UISYSTEM;
 using System.Reflection;
 using System.Runtime.Versioning;
 using System;
+using ABI_RC.Core.InteractionSystem;
 
 public class UIListCreator : MonoBehaviour
 {
@@ -22,13 +23,13 @@ public class UIListCreator : MonoBehaviour
     Assembly asm = Assembly.GetExecutingAssembly();
     public List<string[]> plList = new List<string[]>();
 
-   
+
 
     private const float FadeDuration = 0.5f; // Duration of the fade effect in seconds
 
     public void Show()
     {
-     canvasGO.SetActive(true);
+        canvasGO.SetActive(true);
     }
 
     public void Hide()
@@ -78,9 +79,12 @@ public class UIListCreator : MonoBehaviour
     private void SetupCanvasComponents()
     {
         Canvas canvas = canvasGO.AddComponent<Canvas>();
+        GameObject sr = new GameObject();
+
+        sr.transform.SetParent(canvas.transform, false);
         canvasGO.AddComponent<CanvasScaler>();
         canvasGO.AddComponent<GraphicRaycaster>();
-        canvasGO.transform.localScale = new Vector3(0.005f, 0.01f, 0f);
+        canvasGO.transform.localScale = new Vector3(0.005f, 0.01f, 1f);
         canvasGO.transform.localPosition = new Vector3(-0.62f, 0f, 0f);
         canvasGO.transform.SetParent(QuickMenu.transform, false);
         canvas.renderMode = RenderMode.WorldSpace;
@@ -91,27 +95,51 @@ public class UIListCreator : MonoBehaviour
         GameObject bg = new GameObject("Background");
         bg.transform.SetParent(canvasGO.transform, false);
         UnityEngine.UI.Image bgImage = bg.AddComponent<UnityEngine.UI.Image>();
-        bgImage.color = new UnityEngine.Color(0.5f, 0f, 0.5f, 0.4f);
+        Assembly asm = Assembly.GetExecutingAssembly();
+        Material bmat = new Material(Shader.Find("UI/Default"));
+        bgImage.material = bmat;
+      bmat.mainTexture =new UIfunctions().LoadTextureFromAssembly(asm, "Bluedescriptor_Rewritten.res.PLI.png");
         RectTransform bgRect = bg.GetComponent<RectTransform>();
         bgRect.anchorMin = new Vector2(0, 0);
         bgRect.anchorMax = new Vector2(1, 1);
-        bgRect.sizeDelta = Vector2.zero;
+        bgRect.sizeDelta = canvasGO.transform.localScale;
     }
 
     private void PopulateListContainer()
     {
         GameObject listContainer = new GameObject("ListContainer");
         listContainer.transform.SetParent(canvasGO.transform, false);
+        listContainer.transform.localPosition = new Vector3(3,-6,0);
 
-        // No more scroll view setup here
+        // Set up the ScrollView
+        GameObject scrollView = new GameObject("ScrollView");
+        scrollView.transform.SetParent(listContainer.transform, false);
+        ScrollRect scrollRect = scrollView.AddComponent<ScrollRect>();
+        scrollView.AddComponent<CVR_Menu_Pointer_Reciever>();
 
+        // Set up the Viewport
+        GameObject viewport = new GameObject("Viewport");
+        viewport.transform.SetParent(scrollView.transform, false);
+        RectTransform viewportRect = viewport.AddComponent<RectTransform>();
+        viewportRect.anchorMin = new Vector2(0, 0);
+        viewportRect.anchorMax = new Vector2(1, 1);
+        viewportRect.sizeDelta = new Vector2(0, 0);
+        viewportRect.pivot = new Vector2(0.5f, 0.5f);
+        viewport.AddComponent<Mask>().showMaskGraphic = false;
+        viewport.AddComponent<Image>().color = new Color(0, 0, 0, 0.5f); // Optional: set a background color for the viewport
+
+        // Set up the Content
         GameObject content = new GameObject("Content-BDM");
         cont = content;
-        content.transform.SetParent(listContainer.transform, false);
+        content.transform.SetParent(viewport.transform, false);
         SetupListLayout(content);
+
+        // Link the Content to the ScrollRect
+        scrollRect.content = content.GetComponent<RectTransform>();
 
         PopulateListWithItems(content);
     }
+
 
 
     private void SetupListLayout(GameObject content)
@@ -119,17 +147,14 @@ public class UIListCreator : MonoBehaviour
         VerticalLayoutGroup layoutGroup = content.AddComponent<VerticalLayoutGroup>();
         layoutGroup.childForceExpandWidth = true;
         layoutGroup.childForceExpandHeight = false;
-        layoutGroup.spacing = 5;
+        layoutGroup.spacing = 3;
     }
 
     private void PopulateListWithItems(GameObject content)
     {
         if (plList == null || plList.Count == 0)
         {
-          /*  GameObject aloneItem = new GameObject("AloneItem");
-            aloneItem.transform.SetParent(content.transform, false);
-            TextMeshProUGUI aloneTextMesh = aloneItem.AddComponent<TextMeshProUGUI>();
-            aloneTextMesh.text = "All alone";*/
+           
         }
         else
         {
@@ -141,9 +166,9 @@ public class UIListCreator : MonoBehaviour
     }
 
 
-  
-           
-   
+
+
+
     private void CreateTextItem(string text, Transform parent)
     {
         try
@@ -153,12 +178,13 @@ public class UIListCreator : MonoBehaviour
 
             // Ensure the RectTransform has some size
             RectTransform rectTransform = listItem.AddComponent<RectTransform>();
-            rectTransform.sizeDelta = new Vector2(200, 10);  // Adjust as needed
+            rectTransform.sizeDelta = new Vector2(200, 1);  // Adjust as needed
 
             TextMeshProUGUI textComponent = listItem.AddComponent<TextMeshProUGUI>();
 
-            textComponent.font = Resources.Load("Fonts/ARIAL", typeof(Font) as Font);
-            textComponent.fontSize = 24;
+            textComponent.font = Resources.Load<TMP_FontAsset>("Fonts/ARIAL");
+
+            textComponent.fontSize = 5;
             textComponent.fontSharedMaterial = mat;
             textComponent.material = mat;
             textComponent.color = UnityEngine.Color.white;
@@ -178,7 +204,7 @@ public class UIListCreator : MonoBehaviour
         GameObject contentGO = cont;
         if (contentGO == null)
         {
-           // MelonLogger.Error("GameObject 'Content-BDM' not found!");
+            // MelonLogger.Error("GameObject 'Content-BDM' not found!");
             return; // Exit the method early
         }
 

@@ -8,6 +8,7 @@ using MelonLoader;
 using System;
 using System.Collections;
 using System.IO;
+
 using System.Reflection;
 using TMPro;
 using UnityEngine;
@@ -18,23 +19,45 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
 {
     internal class UIfunctions 
     {
+
         public void panic()
         {
-            
-            CohtmlHud.Instance.ViewDropTextImmediate($"<color=blue>[BD]</color>", $"Blue Descriptor Safety","Panic was initilized reload all avatars to undo.");
+            CohtmlHud.Instance.ViewDropTextImmediate($"<color=blue>[BD]</color>", $"Blue Descriptor Safety", "Panic was initilized reload all avatars to undo.");
+
             //get all gameobjects with the CVRAvatar component from all scenes
             GameObject[] players = new CVRPlayer().remotePlayers();
+
             //loop through all players
             foreach (var player in players)
             {
-                MelonLogger.Msg("Logging Renderers: "+player);
+                MelonLogger.Msg("Logging Renderers: " + player);
+
+                // Stop all animations on the player
+                Animator[] animators = player.GetComponentsInChildren<Animator>();
+                foreach (var animator in animators)
+                {
+                    animator.StopPlayback();
+                }
+
+                // Stop all audio sources on the player, unless they are on a VivoxParticipantTracker
+                AudioSource[] audioSources = player.GetComponentsInChildren<AudioSource>();
+                foreach (var audioSource in audioSources)
+                {
+                    if (audioSource.gameObject.name != "VivoxParticipantTracker")
+                    {
+                        audioSource.Stop();
+                    }
+                }
+
                 //get all renderers from the player
                 Renderer[] renderers = player.GetComponentsInChildren<Renderer>();
+
                 //loop through all renderers
                 foreach (var renderer in renderers)
                 {
                     //get all materials from the renderer
                     Material[] materials = renderer.materials;
+
                     //loop through all materials
                     foreach (var material in materials)
                     {
@@ -42,6 +65,7 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
                         material.shader = Shader.Find("Standard");
                     }
                 }
+
                 MeshRenderer[] meshrenderers = player.GetComponentsInChildren<MeshRenderer>();
                 foreach (var meshrenderer in meshrenderers)
                 {
@@ -54,6 +78,9 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
                 }
             }
         }
+
+
+
 
         /* nameplate related */
 
@@ -134,6 +161,9 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
                     colorChanger.imageToChange = player.PlayerNameplate.friendsImage;
                     colorChanger.textToChange = player.PlayerNameplate.usrNameText;
                     player.PlayerNameplate.usrNameText.outlineWidth = 5;
+                    player.PlayerNameplate.usrNameText.material = new Material( Shader.Find("TextMeshPro/Distance Field"));
+                    player.PlayerNameplate.usrNameText.material.SetFloat("_OutlineWidth",0.1f);
+                    player.PlayerNameplate.usrNameText.material.SetColor("_OutlineColor",Color.red);
                     colorChanger.StartChange();
                     colorChanger.StartChangeTextOutline();
                     // Load and setup Talker icon
