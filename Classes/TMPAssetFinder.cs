@@ -1,5 +1,5 @@
-﻿using TMPro;
-using UnityEngine;
+﻿using UnityEngine;
+using TMPro;
 
 namespace Bluedescriptor_Rewritten.Classes
 {
@@ -8,7 +8,7 @@ namespace Bluedescriptor_Rewritten.Classes
         public static TMP_FontAsset FindFontAssetByName(string fontAssetName)
         {
             // Get all loaded TMP_FontAssets
-            var fontAssets = Resources.FindObjectsOfTypeAll<TMP_FontAsset>();
+            TMP_FontAsset[] fontAssets = Resources.FindObjectsOfTypeAll<TMP_FontAsset>();
 
             // Search for the font asset with the specified name
             foreach (TMP_FontAsset fontAsset in fontAssets)

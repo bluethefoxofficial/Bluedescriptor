@@ -114,17 +114,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\UnityEngine.JSONSerializeModule.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.Physics2DModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\UnityEngine.Physics2DModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.ProfilerModule">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\UnityEngine.ProfilerModule.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine.ScreenCaptureModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\UnityEngine.ScreenCaptureModule.dll</HintPath>
@@ -161,7 +150,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AntiToxin.cs" />
-    <Compile Include="Classes\AdvancedCameraRaycastCulling.cs" />
     <Compile Include="Classes\Audio.cs" />
     <Compile Include="Classes\AudioManager.cs" />
     <Compile Include="Classes\BlackAndWhiteConverter.cs" />
@@ -173,23 +161,21 @@
     <Compile Include="Classes\EmbedExtract.cs" />
     <Compile Include="Classes\Fontlogger.cs" />
     <Compile Include="Classes\MaterialFinder.cs" />
-    <Compile Include="Classes\MemoryCleaner.cs" />
     <Compile Include="Classes\moddingnetwork.cs" />
-    <Compile Include="Classes\MusicPlayer.cs" />
     <Compile Include="Classes\Props.cs" />
     <Compile Include="Classes\RainbowColorChange.cs" />
     <Compile Include="Classes\SavWav.cs" />
     <Compile Include="Classes\ScreenRecorder.cs" />
     <Compile Include="Classes\SkinInfo.cs" />
     <Compile Include="Classes\skins.cs" />
-    <Compile Include="Classes\TextureConversion.cs" />
-    <Compile Include="Classes\themeengine.cs" />
     <Compile Include="Classes\TMPAssetFinder.cs" />
     <Compile Include="Classes\UIListCreator.cs" />
     <Compile Include="Classes\utils.cs" />
     <Compile Include="Classes\ZipExtractor.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UISYSTEM\Alarm.cs" />
+    <Compile Include="UISYSTEM\EULA.cs" />
     <Compile Include="UISYSTEM\Icons.cs" />
     <Compile Include="UISYSTEM\UI.cs" />
     <Compile Include="UISYSTEM\UIfunctions.cs" />
@@ -229,7 +215,7 @@
     <EmbeddedResource Include="res\trash.png" />
     <EmbeddedResource Include="res\download.png" />
     <EmbeddedResource Include="res\themes.png" />
-    <EmbeddedResource Include="res\Nameplates\VRC\talker\Talker_3.png" />
+    <EmbeddedResource Include="res\Nameplates\VRC\Talker.png" />
     <EmbeddedResource Include="res\Rewards.png" />
     <EmbeddedResource Include="res\reconnect.png" />
     <EmbeddedResource Include="res\Nameplates\VRC\Visitor.png" />
@@ -268,51 +254,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="res\PLI.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="res\grass.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="res\Nameplates\VRC\talker\Talker_2.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="res\Nameplates\VRC\talker\Talker_0.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="res\Nameplates\VRC\talker\Talker_1.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="res\musicplus.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="res\videoplayer.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="res\optim.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="res\audiofile.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="res\pauseicon.png" />
-    <EmbeddedResource Include="res\playicon.png" />
-    <EmbeddedResource Include="res\stopicon.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="res\fastforward.png" />
-    <EmbeddedResource Include="res\reverse.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="res\url.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="res\playlist.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="res\vrs.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="res\bd_ui_setup.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

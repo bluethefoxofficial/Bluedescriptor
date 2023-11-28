@@ -1,6 +1,7 @@
 ﻿using MelonLoader;
 using System;
 using System.IO;
+using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -15,19 +16,16 @@ namespace Bluedescriptor_Rewritten.Classes
          * this is a work in progress no where near ready for production
          * 
          */
-
+     
+        
         public void Audioprep(string res, string filename)
         {
             // Get the current assembly
-            var assembly = Assembly.GetExecutingAssembly();
+            Assembly assembly = Assembly.GetExecutingAssembly();
 
             // Get the directory of the DLL file
-            var assemblyDirectory = Path.GetDirectoryName(new Uri(assembly.CodeBase).LocalPath);
-            var saveDirectory = Path.Combine(assemblyDirectory, "bluedescriptor");
-            Directory.CreateDirectory(saveDirectory);
-            // Create a file stream to save the resource
-            var filePath = Path.Combine(saveDirectory, filename + ".wav");
-            if (File.Exists(filePath)) { return; }
+            string assemblyDirectory = Path.GetDirectoryName(new Uri(assembly.CodeBase).LocalPath);
+
             // Get the stream of the embedded resource
             using (Stream resourceStream = assembly.GetManifestResourceStream(res))
             {
@@ -37,35 +35,37 @@ namespace Bluedescriptor_Rewritten.Classes
                     MelonLogger.Msg("Resource not found: " + res);
                     return;
                 }
-
                 // Create a directory to save the resource if it doesn't exist
-                
+                string saveDirectory = Path.Combine(assemblyDirectory, "bluedescriptor");
+                Directory.CreateDirectory(saveDirectory);
+           
 
+                // Create a file stream to save the resource
+                string filePath = Path.Combine(saveDirectory, filename + ".wav");
                 using (FileStream fileStream = File.Create(filePath))
+                {
                     // Copy the resource stream to the file stream
                     resourceStream.CopyTo(fileStream);
+                }
 
                 MelonLogger.Msg("COMPLETE");
             }
         }
-
         public AudioSource audioSource = new AudioSource();
 
         // Function to load audio data from a file
 
-        public async Task<AudioClip> LoadClip(string path)
+       public async Task<AudioClip> LoadClip(string path)
         {
             AudioClip clip = null;
-
             using (UnityWebRequest uwr = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.WAV))
             {
                 uwr.SendWebRequest();
-
                 try
                 {
                     while (!uwr.isDone) await Task.Delay(5);
 
-                    if (uwr.isNetworkError || uwr.isHttpError) MelonLogger.Log($"{uwr.error}");
+                    if (uwr.isNetworkError || uwr.isHttpError) Debug.Log($"{uwr.error}");
                     else
                     {
                         clip = DownloadHandlerAudioClip.GetContent(uwr);
@@ -80,20 +80,19 @@ namespace Bluedescriptor_Rewritten.Classes
             return clip;
         }
 
-        // load clip from resources
+
+        //load clip from resources
         public async Task<AudioClip> LoadClipFromResources(string path)
         {
             AudioClip clip = null;
-
             using (UnityWebRequest uwr = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.WAV))
             {
                 uwr.SendWebRequest();
-
                 try
                 {
                     while (!uwr.isDone) await Task.Delay(5);
 
-                    if (uwr.isNetworkError || uwr.isHttpError) MelonLogger.Log($"{uwr.error}");
+                    if (uwr.isNetworkError || uwr.isHttpError) Debug.Log($"{uwr.error}");
                     else
                     {
                         clip = DownloadHandlerAudioClip.GetContent(uwr);
@@ -107,14 +106,16 @@ namespace Bluedescriptor_Rewritten.Classes
 
             return clip;
         }
+
 
         /* load and play audio from a file*/
 
         public async void PlayAudio(string path)
         {
-            var clip = await LoadClipFromResources(path);
+            AudioClip clip = await LoadClipFromResources(path);
             audioSource.clip = clip;
             audioSource.Play();
         }
     }
+ 
 }

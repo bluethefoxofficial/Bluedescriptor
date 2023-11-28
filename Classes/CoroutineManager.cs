@@ -6,9 +6,12 @@ namespace Bluedescriptor_Rewritten.Classes
 {
     public class CoroutineManager : MonoBehaviour
     {
-        Dictionary<string, Coroutine> coroutineDictionary;
+        private Dictionary<string, Coroutine> coroutineDictionary;
 
-        void Awake() => coroutineDictionary = new Dictionary<string, Coroutine>();
+        void Awake()
+        {
+            coroutineDictionary = new Dictionary<string, Coroutine>();
+        }
 
         public void StartManagedCoroutine(string coroutineName, IEnumerator coroutine)
         {
@@ -17,7 +20,7 @@ namespace Bluedescriptor_Rewritten.Classes
                 StopManagedCoroutine(coroutineName);
             }
 
-            var newCoroutine = StartCoroutine(coroutine);
+            Coroutine newCoroutine = StartCoroutine(coroutine);
             coroutineDictionary.Add(coroutineName, newCoroutine);
         }
 

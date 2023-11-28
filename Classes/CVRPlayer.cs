@@ -1,20 +1,29 @@
-﻿using UnityEngine;
+﻿using MelonLoader;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using UnityEngine;
+ 
 
 namespace Bluedescriptor_Rewritten.Classes
 {
     internal class CVRPlayer
     {
-        public UnityEngine.GameObject Localplayer() => GameObject.Find("_PLAYERLOCAL");
+        public UnityEngine.GameObject Localplayer()
+        {
+            return GameObject.Find("_PLAYERLOCAL");
+        }
 
         public GameObject[] remotePlayers()
         {
-            var sceneobj = new cvrworld().gameobjectsinscene(new cvrworld().getallscenesingame()[0].name);
+            GameObject[] sceneobj = new cvrworld().gameobjectsinscene(new cvrworld().getallscenesingame()[0].name);
 
             // Initialize players array with the appropriate size
-            var players = new GameObject[sceneobj.Length];
+            GameObject[] players = new GameObject[sceneobj.Length];
 
-            var num = 0;
-
+            int num = 0;
             foreach (var obj in sceneobj)
             {
                 // Check if obj contains CVRAvatar component, if so, add to the list
@@ -33,10 +42,10 @@ namespace Bluedescriptor_Rewritten.Classes
 
         public int[] localplayerposition()
         {
-            var player = Localplayer();
-            var nullified = new int[2];
+            GameObject player = Localplayer();
+            int[] nullified = new int[2];
             if (player == null) return nullified;
-            var position = new int[2];
+            int[] position = new int[2];
             position[0] = (int)player.transform.position.x;
             position[1] = (int)player.transform.position.y;
             position[2] = (int)player.transform.position.z;
