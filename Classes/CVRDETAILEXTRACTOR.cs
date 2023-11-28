@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Bluedescriptor_Rewritten.Classes
@@ -11,7 +7,8 @@ namespace Bluedescriptor_Rewritten.Classes
     {
         public GameObject[] objector()
         {
-            List<GameObject> list = new List<GameObject>();
+            var list = new List<GameObject>();
+
             foreach (GameObject gameObject in Resources.FindObjectsOfTypeAll(typeof(GameObject)))
             {
                 if (gameObject.hideFlags == HideFlags.None)
@@ -19,7 +16,8 @@ namespace Bluedescriptor_Rewritten.Classes
                     list.Add(gameObject);
                 }
             }
-            return  list.ToArray();
+
+            return list.ToArray();
         }
     }
 }

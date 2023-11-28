@@ -32,6 +32,19 @@ namespace Bluedescriptor_Rewritten.UISYSTEM
                 BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_ir", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.ir.png"));
                 BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_recfol", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.recfol.png"));
                 BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_stoprec", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.stoprec.png"));
+                BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_musicplus", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.musicplus.png"));
+                BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_videoplayer", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.videoplayer.png"));
+                BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_optim", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.optim.png"));
+                BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_audiofile", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.audiofile.png"));
+                BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_playi", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.playicon.png"));
+                BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_pausei", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.pauseicon.png"));
+                BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_stopi", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.stopicon.png"));
+                BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_ff", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.fastforward.png"));
+                BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_r", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.reverse.png"));
+                BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_url", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.url.png"));
+                BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_playlist", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.playlist.png"));
+                BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_vrc", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.vrs.png"));
+                BTKUILib.QuickMenuAPI.PrepareIcon("Bluedescriptor", "bd_uisetup", Assembly.GetExecutingAssembly().GetManifestResourceStream("Bluedescriptor_Rewritten.res.bd_ui_setup.png"));
                 preparedicons = false;
             
         }

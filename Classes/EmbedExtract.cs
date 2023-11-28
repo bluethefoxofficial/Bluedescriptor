@@ -1,6 +1,6 @@
-﻿using System.IO;
+﻿using MelonLoader;
+using System.IO;
 using System.Reflection;
-using MelonLoader;
 
 public class EmbedExtract
 {
@@ -14,7 +14,7 @@ public class EmbedExtract
             return false;
         }
 
-        Assembly assembly = Assembly.GetExecutingAssembly();
+        var assembly = Assembly.GetExecutingAssembly();
 
         using (Stream stream = assembly.GetManifestResourceStream(resourceName))
         {
@@ -25,16 +25,15 @@ public class EmbedExtract
             }
 
             // Ensure the directory exists
-            string directoryPath = Path.GetDirectoryName(outputPath);
+            var directoryPath = Path.GetDirectoryName(outputPath);
+
             if (!Directory.Exists(directoryPath))
             {
                 Directory.CreateDirectory(directoryPath);
             }
 
             using (FileStream fileStream = new FileStream(outputPath, FileMode.Create))
-            {
                 stream.CopyTo(fileStream);
-            }
         }
 
         MelonLogger.Msg($"Resource {resourceName} extracted to {outputPath}.");

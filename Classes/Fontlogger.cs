@@ -1,13 +1,13 @@
-﻿using UnityEngine;
-using MelonLoader;
+﻿using MelonLoader;
 using TMPro;
+using UnityEngine;
 
 public class FontLogger
 {
-
     public void LogAllFonts()
     {
-        Font[] allFonts = Resources.FindObjectsOfTypeAll<Font>();
+        var allFonts = Resources.FindObjectsOfTypeAll<Font>();
+
         if (allFonts.Length == 0)
         {
             MelonLogger.Msg("No fonts found.");
@@ -15,14 +15,15 @@ public class FontLogger
         }
 
         MelonLogger.Msg("Listing all loaded fonts:");
+
         foreach (Font font in allFonts)
-        {
             MelonLogger.Msg(font.name);
-        }
     }
+
     public void LogAllTMPFontsAndMaterials()
     {
-        TMP_FontAsset[] allTMPFonts = Resources.FindObjectsOfTypeAll<TMP_FontAsset>();
+        var allTMPFonts = Resources.FindObjectsOfTypeAll<TMP_FontAsset>();
+
         if (allTMPFonts.Length == 0)
         {
             MelonLogger.Msg("No TextMesh Pro fonts found.");
@@ -30,9 +31,11 @@ public class FontLogger
         }
 
         MelonLogger.Msg("Listing all loaded TextMesh Pro fonts and their materials:");
+
         foreach (TMP_FontAsset font in allTMPFonts)
         {
             MelonLogger.Msg($"Font: {font.name}");
+
             if (font.material != null)
             {
                 MelonLogger.Msg($"Material: {font.material.name}");

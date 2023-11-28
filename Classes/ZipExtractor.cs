@@ -1,7 +1,7 @@
-﻿using System.IO;
+﻿using MelonLoader;
 using System;
+using System.IO;
 using System.IO.Compression;
-using MelonLoader;
 
 public class ZipExtractor
 {
