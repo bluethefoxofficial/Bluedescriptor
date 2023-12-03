@@ -1,51 +1,48 @@
-﻿using UnityEngine;
-using UnityEngine.Networking;
+﻿
 using MelonLoader;
 using System.Collections;
-using System.Diagnostics.Eventing.Reader;
+using System.IO;
+using System.Reflection;
+using UnityEngine;
+using UnityEngine.Networking;
 
 public class AudioManager : MonoBehaviour
 {
+  private bool m_IsPlaying;
 
-    private bool m_IsPlaying = false;
-    public void PlayAudio(string audioFileName)
+  public void PlayAudio(string audioFileName) => StartCoroutine(LoadAndPlayAudio(audioFileName));
+
+  private IEnumerator LoadAndPlayAudio(string audioFileName)
+  {
+    string dllLocation = Assembly.GetExecutingAssembly().Location;
+    string directory = Path.GetDirectoryName(dllLocation);
+    string audioFilePath = Path.Combine(directory, "bluedescriptor", audioFileName);
+    using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://" + audioFilePath, (AudioType) 20))
     {
-        StartCoroutine(LoadAndPlayAudio(audioFileName));
-    }
-
-    private IEnumerator LoadAndPlayAudio(string audioFileName)
-    {
-        string dllLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
-        string directory = System.IO.Path.GetDirectoryName(dllLocation);
-        string audioFilePath = System.IO.Path.Combine(directory, "bluedescriptor", audioFileName);
-
-        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://" + audioFilePath, AudioType.WAV))
+      yield return  www.SendWebRequest();
+      if (www.result == UnityWebRequest.Result.Success)
+      {
+        AudioClip clip = DownloadHandlerAudioClip.GetContent(www);
+        if (m_IsPlaying)
         {
-            yield return www.SendWebRequest();
-
-            if (www.result == UnityWebRequest.Result.Success)
-            {
-                AudioClip clip = DownloadHandlerAudioClip.GetContent(www);
-                if (m_IsPlaying) { m_IsPlaying = false; yield break; }
-                if (GameObject.Find("AudioObject_" + audioFileName)) { Destroy(GameObject.Find("AudioObject_" + audioFileName)); }
-                GameObject audioObject = new GameObject("AudioObject_" + audioFileName);
-                AudioSource audioSource = audioObject.AddComponent<AudioSource>();
-
-                audioSource.clip = clip;
-
-
-                audioSource.Play();
-
-
-
-                Destroy(audioObject, clip.length);
-            }
-            else
-            {
-                MelonLogger.Error($"Failed to load audio: {www.error}");
-            }
+          m_IsPlaying = false;
         }
+        else
+        {
+          if ( GameObject.Find("AudioObject_" + audioFileName))
+            GameObject.Destroy( GameObject.Find("AudioObject_" + audioFileName));
+          GameObject audioObject = new GameObject("AudioObject_" + audioFileName);
+          AudioSource audioSource = audioObject.AddComponent<AudioSource>();
+          audioSource.clip = clip;
+          audioSource.Play();
+          GameObject.Destroy( audioObject, clip.length);
+          clip = null;
+          audioObject = null;
+          audioSource = null;
+        }
+      }
+      else
+        MelonLogger.Error("Failed to load audio: " + www.error);
     }
-
-
+  }
 }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 
 namespace Bluedescriptor_Rewritten.Classes
 {
@@ -6,19 +7,12 @@ namespace Bluedescriptor_Rewritten.Classes
     {
         public static Material FindMaterialByName(string materialName)
         {
-            // Get all loaded materials
-            Material[] materials = Resources.FindObjectsOfTypeAll<Material>();
-
-            // Search for the material with the specified name
-            foreach (Material mat in materials)
+            foreach (Material materialByName in Resources.FindObjectsOfTypeAll<Material>())
             {
-                if (mat.name == materialName)
-                {
-                    return mat;
-                }
+                if ((materialByName).name == materialName)
+                    return materialByName;
             }
 
-            // Return null if no material with the specified name is found
             return null;
         }
     }

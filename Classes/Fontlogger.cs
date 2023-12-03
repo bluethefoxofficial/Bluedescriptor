@@ -1,46 +1,45 @@
-﻿using UnityEngine;
-using MelonLoader;
+﻿using MelonLoader;
 using TMPro;
+using UnityEngine;
 
 public class FontLogger
 {
-
     public void LogAllFonts()
     {
-        Font[] allFonts = Resources.FindObjectsOfTypeAll<Font>();
-        if (allFonts.Length == 0)
+        Font[] objectsOfTypeAll = Resources.FindObjectsOfTypeAll<Font>();
+
+        if (objectsOfTypeAll == null || objectsOfTypeAll.Length == 0)
         {
             MelonLogger.Msg("No fonts found.");
             return;
         }
 
         MelonLogger.Msg("Listing all loaded fonts:");
-        foreach (Font font in allFonts)
-        {
+
+        foreach (Font font in objectsOfTypeAll)
             MelonLogger.Msg(font.name);
-        }
     }
+
     public void LogAllTMPFontsAndMaterials()
     {
-        TMP_FontAsset[] allTMPFonts = Resources.FindObjectsOfTypeAll<TMP_FontAsset>();
-        if (allTMPFonts.Length == 0)
+        TMP_FontAsset[] objectsOfTypeAll = Resources.FindObjectsOfTypeAll<TMP_FontAsset>();
+
+        if (objectsOfTypeAll == null || objectsOfTypeAll.Length == 0)
         {
             MelonLogger.Msg("No TextMesh Pro fonts found.");
             return;
         }
 
         MelonLogger.Msg("Listing all loaded TextMesh Pro fonts and their materials:");
-        foreach (TMP_FontAsset font in allTMPFonts)
+
+        foreach (TMP_FontAsset tmpFontAsset in objectsOfTypeAll)
         {
-            MelonLogger.Msg($"Font: {font.name}");
-            if (font.material != null)
-            {
-                MelonLogger.Msg($"Material: {font.material.name}");
-            }
+            MelonLogger.Msg("Font: " + tmpFontAsset.name);
+
+            if (tmpFontAsset.material != null)
+                MelonLogger.Msg("Material: " + tmpFontAsset.material.name);
             else
-            {
                 MelonLogger.Msg("No associated material found.");
-            }
         }
     }
 }

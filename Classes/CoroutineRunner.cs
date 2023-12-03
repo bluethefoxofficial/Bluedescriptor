@@ -3,24 +3,22 @@ using UnityEngine;
 
 public class CoroutineRunner : MonoBehaviour
 {
-    private static CoroutineRunner _instance;
+    static CoroutineRunner _instance;
 
     public static CoroutineRunner Instance
     {
         get
         {
-            if (_instance == null)
+            if (CoroutineRunner._instance == null)
             {
-                GameObject coroutineRunnerObject = new GameObject("CoroutineRunner");
-                _instance = coroutineRunnerObject.AddComponent<CoroutineRunner>();
-                DontDestroyOnLoad(coroutineRunnerObject);
+                var gameObject = new GameObject(nameof(CoroutineRunner));
+                CoroutineRunner._instance = gameObject.AddComponent<CoroutineRunner>();
+                DontDestroyOnLoad(gameObject);
             }
-            return _instance;
+
+            return CoroutineRunner._instance;
         }
     }
 
-    public void StartRoutine(IEnumerator routine)
-    {
-        StartCoroutine(routine);
-    }
+    public void StartRoutine(IEnumerator routine) => StartCoroutine(routine);
 }

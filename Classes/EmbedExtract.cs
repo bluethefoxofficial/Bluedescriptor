@@ -1,43 +1,36 @@
-﻿using System.IO;
-using System.Reflection;
+﻿
 using MelonLoader;
+using System.IO;
+using System.Reflection;
 
 public class EmbedExtract
 {
-    // Extracts an embedded resource from the assembly and saves it to a specified directory.
     public static bool ExtractResource(string resourceName, string outputPath)
     {
-        // Check if the file already exists
         if (File.Exists(outputPath))
         {
-            MelonLogger.Msg($"File {outputPath} already exists. Extraction aborted.");
+            MelonLogger.Msg("File " + outputPath + " already exists. Extraction aborted.");
             return false;
         }
 
-        Assembly assembly = Assembly.GetExecutingAssembly();
-
-        using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+        using (Stream manifestResourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
         {
-            if (stream == null)
+            if (manifestResourceStream == null)
             {
-                MelonLogger.Msg($"Resource {resourceName} not found.");
+                MelonLogger.Msg("Resource " + resourceName + " not found.");
                 return false;
             }
 
-            // Ensure the directory exists
-            string directoryPath = Path.GetDirectoryName(outputPath);
-            if (!Directory.Exists(directoryPath))
-            {
-                Directory.CreateDirectory(directoryPath);
-            }
+            var directoryName = Path.GetDirectoryName(outputPath);
 
-            using (FileStream fileStream = new FileStream(outputPath, FileMode.Create))
-            {
-                stream.CopyTo(fileStream);
-            }
+            if (!Directory.Exists(directoryName))
+                Directory.CreateDirectory(directoryName);
+
+            using (FileStream destination = new FileStream(outputPath, FileMode.Create))
+                manifestResourceStream.CopyTo(destination);
         }
 
-        MelonLogger.Msg($"Resource {resourceName} extracted to {outputPath}.");
+        MelonLogger.Msg("Resource " + resourceName + " extracted to " + outputPath + ".");
         return true;
     }
 }
